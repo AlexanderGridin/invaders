@@ -1,6 +1,14 @@
 import { AssetToLoad } from "Game/modules/AssetsRepository";
 
-export type AssetName = "enemy-car" | "player-base" | "player-gun";
+export type AssetName =
+	| "enemy-car"
+	| "player-base"
+	| "player-gun"
+	| "enemy-light"
+	| "enemy-regular"
+	| "enemy-medium"
+	| "bullet"
+	| "enemy-hard";
 
 export const assetsToLoad: AssetToLoad[] = [
 	{
@@ -14,5 +22,25 @@ export const assetsToLoad: AssetToLoad[] = [
 	{
 		name: "player-gun",
 		src: "/assets/Gun_01.png",
+	},
+	{
+		name: "enemy-light",
+		src: "/assets/TLight.png",
+	},
+	{
+		name: "enemy-regular",
+		src: "/assets/TRegular.png",
+	},
+	{
+		name: "enemy-medium",
+		src: "/assets/TMedium.png",
+	},
+	{
+		name: "enemy-hard",
+		src: "/assets/THard.png",
+	},
+	{
+		name: "bullet",
+		src: "/assets/Light_Shell.png",
 	},
 ];

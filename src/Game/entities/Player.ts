@@ -5,6 +5,7 @@ import { ImgAsset } from "Game/modules/AssetsRepository";
 import { KeyboardKeyCode } from "Game/modules/Keyboard/enums";
 import { AssetName } from "App/components/GameCanvas/assetsToLoad";
 import { defineScale } from "Game/utils";
+import { HealthBar } from "./HealthBar";
 
 type PlayerAsset = Record<"base" | "gun", ImgAsset>;
 
@@ -12,12 +13,18 @@ export class Player extends Entity implements Renderable {
 	private game: Game;
 
 	private initialSpeed = this.speed;
+	private speedBoost = 5;
 
 	private gun = new GameObject({});
 	private gunXOffset = 0;
 	private gunYOffset = 0;
 
 	private asset: PlayerAsset = {} as PlayerAsset;
+
+	private shootTime = 0;
+
+	private healthBar: HealthBar;
+	public isInGame = true;
 
 	constructor(game: Game) {
 		super({
@@ -26,16 +33,33 @@ export class Player extends Entity implements Renderable {
 		});
 
 		this.game = game;
+
+		this.healthBar = new HealthBar({
+			game: this.game,
+			entity: this,
+			color: "green",
+			offsetXMultip: 0.8,
+			offsetYMultip: 0.17,
+		});
+
+		this.init();
 	}
 
-	public preload() {
-		this.asset.gun = this.game.assetsRepo.getAsset<AssetName>(
+	public init() {
+		const gunAsset = this.game.assetsRepo.getAsset<AssetName, ImgAsset>(
 			"player-gun"
-		) as ImgAsset;
+		);
 
-		this.asset.base = this.game.assetsRepo.getAsset<AssetName>(
+		const baseAsset = this.game.assetsRepo.getAsset<AssetName, ImgAsset>(
 			"player-base"
-		) as ImgAsset;
+		);
+
+		if (!gunAsset || !baseAsset) {
+			return;
+		}
+
+		this.asset.gun = gunAsset;
+		this.asset.base = baseAsset;
 
 		this.scale = defineScale(150, this.asset.gun.height);
 		this.setSize();
@@ -64,6 +88,8 @@ export class Player extends Entity implements Renderable {
 	}
 
 	public update() {
+		this.shootTime += this.game.deltaTime;
+
 		if (this.game.keyboard.isKeyPressed(KeyboardKeyCode.J)) {
 			this.moveLeft();
 		}
@@ -78,7 +104,36 @@ export class Player extends Entity implements Renderable {
 			this.resetSpeed();
 		}
 
+		if (this.game.keyboard.isKeyPressed(KeyboardKeyCode.F)) {
+			this.shoot();
+		} else {
+			this.shootTime = 0;
+		}
+
 		this.syncGunPosition();
+		this.healthBar.update();
+	}
+
+	private shoot() {
+		if (!this.isShootingTime) return;
+
+		const bullet = this.game.bulletsPool.getObject();
+		if (bullet) {
+			bullet.pushInGame(
+				this.gun.x + this.gun.width * 0.5 - bullet.width * 0.5,
+				this.gun.y
+			);
+		}
+
+		this.resetShootingTime();
+	}
+
+	private get isShootingTime(): boolean {
+		return this.shootTime > this.game.deltaTime * 2;
+	}
+
+	private resetShootingTime() {
+		this.shootTime = 0;
 	}
 
 	syncGunPosition() {
@@ -90,7 +145,7 @@ export class Player extends Entity implements Renderable {
 
 	moveLeft() {
 		if (this.x > 0 - this.width * 0.5 + this.gunXOffset) {
-			this.x = this.x - this.speed;
+			this.x -= this.speed;
 			return;
 		}
 
@@ -102,7 +157,7 @@ export class Player extends Entity implements Renderable {
 			this.x + this.width * 0.5 - this.gunXOffset <
 			this.game.renderer.canvasWidth
 		) {
-			this.x = this.x + this.speed;
+			this.x += this.speed;
 			return;
 		}
 
@@ -111,7 +166,7 @@ export class Player extends Entity implements Renderable {
 	}
 
 	private boostSpeed() {
-		this.speed = this.initialSpeed + 10;
+		this.speed = this.initialSpeed + this.speedBoost;
 	}
 
 	private resetSpeed() {
@@ -120,6 +175,7 @@ export class Player extends Entity implements Renderable {
 
 	public render() {
 		this.renderAssets();
+		this.healthBar.render();
 
 		if (this.game.isDebug) {
 			this.renderHitboxes();
@@ -148,5 +204,9 @@ export class Player extends Entity implements Renderable {
 			obj: this.gun,
 			color: "red",
 		});
+	}
+
+	public ascceptDamage(amount = 1) {
+		this.lives -= amount;
 	}
 }

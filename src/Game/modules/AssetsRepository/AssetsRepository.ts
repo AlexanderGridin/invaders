@@ -84,7 +84,9 @@ export class AssetsRepository {
 		});
 	}
 
-	getAsset<NameType>(name: NameType) {
+	getAsset<NameType, AssetType extends Asset>(
+		name: NameType
+	): AssetType | null {
 		if (typeof name !== "string") {
 			throw new Error("Expected value of string type as the asset name");
 		}
@@ -93,7 +95,10 @@ export class AssetsRepository {
 
 		switch (asset.type) {
 			case AssetType.Image:
-				return asset as ImgAsset;
+				return asset as AssetType;
+
+			default:
+				return null;
 		}
 	}
 }
