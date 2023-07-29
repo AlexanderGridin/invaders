@@ -61,11 +61,24 @@ export class Renderer {
 		color = "#000",
 	}: {
 		obj: GameObject;
-		color: string;
+		color?: string;
 	}) {
 		this.ctx.save();
 		this.ctx.strokeStyle = color;
 		this.ctx.strokeRect(obj.x, obj.y, obj.width, obj.height);
+		this.ctx.restore();
+	}
+
+	public fillRect({
+		obj,
+		color = "#000",
+	}: {
+		obj: GameObject;
+		color?: string;
+	}) {
+		this.ctx.save();
+		this.ctx.fillStyle = color;
+		this.ctx.fillRect(obj.x, obj.y, obj.width, obj.height);
 		this.ctx.restore();
 	}
 

@@ -21,7 +21,7 @@ const createWindow = () => {
 	if (isDev) {
 		window.webContents.openDevTools();
 		// open dev tools in separate window
-		window.webContents.openDevTools({ mode: "detach" });
+		// window.webContents.openDevTools({ mode: "detach" });
 	}
 
 	// window.maximize();

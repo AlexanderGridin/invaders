@@ -19,12 +19,13 @@ export const GameCanvas = ({ width, height }: GameCanvasProps) => {
 		gameRef.current = game;
 
 		try {
-			await game.preload(assetsToLoad);
+			await game.loadAssets(assetsToLoad);
 		} catch (e) {
 			const error = e as Error;
 			throw new Error(error.message);
 		}
 
+		game.init();
 		game.start();
 	};
 

@@ -1,8 +1,10 @@
 import { Renderable } from "./core";
-import { Player } from "./entities";
+import { Bullet, Player } from "./entities";
+import { Enemy } from "./entities/Enemy";
 import { AssetsRepository, AssetToLoad } from "./modules/AssetsRepository";
 import { Keyboard } from "./modules/Keyboard";
 import { KeyboardKeyCode } from "./modules/Keyboard/enums";
+import { ObjectsPool } from "./modules/ObjectsPool";
 import { Renderer } from "./modules/Renderer/Renderer";
 
 export class Game {
@@ -10,12 +12,19 @@ export class Game {
 	public assetsRepo = new AssetsRepository();
 
 	public keyboard = new Keyboard();
-	public player = new Player(this);
 
-	private renderables: Renderable[] = [this.player];
+	public player!: Player;
+	public enemy!: Enemy;
+
+	public bulletsPool!: ObjectsPool<Bullet>;
+
+	private renderables: Renderable[] = [];
+
 	private isInProgress = false;
-
 	public isDebug = false;
+
+	private prevFrameTime = 0;
+	public deltaTime = 0;
 
 	constructor(canvas: HTMLCanvasElement | null) {
 		this.renderer = new Renderer(canvas);
@@ -25,10 +34,26 @@ export class Game {
 		console.log("Start!!!");
 
 		this.isInProgress = true;
-		this.renderGameFrame();
+		this.renderGameFrame(0);
 	}
 
-	renderGameFrame() {
+	public init() {
+		this.player = new Player(this);
+		this.enemy = new Enemy(this);
+
+		this.bulletsPool = new ObjectsPool<Bullet>({
+			game: this,
+			limit: 20,
+			entityClass: Bullet,
+		});
+
+		this.renderables = [this.enemy, this.bulletsPool, this.player];
+	}
+
+	renderGameFrame(frameTime: number) {
+		this.deltaTime = Math.floor(frameTime - this.prevFrameTime);
+		this.prevFrameTime = frameTime;
+
 		if (this.isInProgress) {
 			this.renderer.clear();
 
@@ -51,9 +76,8 @@ export class Game {
 		}
 	}
 
-	public async preload(assets: AssetToLoad[]) {
+	public async loadAssets(assets: AssetToLoad[]) {
 		await this.assetsRepo.loadAssets(assets);
-		this.player.preload();
 	}
 
 	private update() {
