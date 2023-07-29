@@ -43,7 +43,7 @@ export class Game {
 
 		this.bulletsPool = new ObjectsPool<Bullet>({
 			game: this,
-			limit: 20,
+			limit: 30,
 			entityClass: Bullet,
 		});
 
