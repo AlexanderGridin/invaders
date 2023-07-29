@@ -19,7 +19,7 @@ export class Enemy extends Entity implements Renderable {
 	constructor(game: Game) {
 		super({
 			lives: 10,
-			speed: 1,
+			speed: 0,
 		});
 
 		this.game = game;
@@ -52,7 +52,7 @@ export class Enemy extends Entity implements Renderable {
 	public update() {
 		if (!this.isInGame) return;
 
-		this.y += 1;
+		this.y += this.speed;
 
 		if (
 			this.y >= this.game.renderer.canvasHeight - this.height ||
