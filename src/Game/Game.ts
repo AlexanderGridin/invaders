@@ -1,5 +1,6 @@
 import { Renderable } from "./core";
-import { Bullet, Player } from "./entities";
+import { Player } from "./entities";
+import { HeavyBullet, LightBullet, MediumBullet } from "./entities/bullets";
 import { Enemy } from "./entities/Enemy";
 import { AssetsRepository, AssetToLoad } from "./modules/AssetsRepository";
 import { Keyboard } from "./modules/Keyboard";
@@ -16,7 +17,9 @@ export class Game {
 	public player!: Player;
 	public enemy!: Enemy;
 
-	public bulletsPool!: ObjectsPool<Bullet>;
+	public lightBulletsPool!: ObjectsPool<LightBullet>;
+	public mediumBulletsPool!: ObjectsPool<MediumBullet>;
+	public heavyBulletsPool!: ObjectsPool<HeavyBullet>;
 
 	private renderables: Renderable[] = [];
 
@@ -41,13 +44,29 @@ export class Game {
 		this.player = new Player(this);
 		this.enemy = new Enemy(this);
 
-		this.bulletsPool = new ObjectsPool<Bullet>({
+		this.lightBulletsPool = new ObjectsPool<LightBullet>({
 			game: this,
 			limit: 30,
-			entityClass: Bullet,
+			entityClass: LightBullet,
+		});
+		this.mediumBulletsPool = new ObjectsPool<MediumBullet>({
+			game: this,
+			limit: 10,
+			entityClass: MediumBullet,
+		});
+		this.heavyBulletsPool = new ObjectsPool<HeavyBullet>({
+			game: this,
+			limit: 10,
+			entityClass: HeavyBullet,
 		});
 
-		this.renderables = [this.enemy, this.bulletsPool, this.player];
+		this.renderables = [
+			this.enemy,
+			this.lightBulletsPool,
+			this.mediumBulletsPool,
+			this.heavyBulletsPool,
+			this.player,
+		];
 	}
 
 	renderGameFrame(frameTime: number) {

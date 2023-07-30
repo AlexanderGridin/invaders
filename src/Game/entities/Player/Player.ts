@@ -29,7 +29,6 @@ export class Player extends Entity implements Renderable {
 		});
 
 		this.game = game;
-
 		this.base = new Base(this.game, this);
 
 		this.initSize();
@@ -81,17 +80,25 @@ export class Player extends Entity implements Renderable {
 			this.resetSpeed();
 		}
 
-		if (this.game.keyboard.isKeyPressed(KeyboardKeyCode.F)) {
-			this.shoot();
-		} else {
-			this.shootTime = 0;
-		}
+		this.handleFKeyPressed();
+
+		this.handleDKeyClicked();
+		this.handleSKeyClicked();
 	}
 
-	private shoot() {
+	private handleFKeyPressed() {
+		if (this.game.keyboard.isKeyPressed(KeyboardKeyCode.F)) {
+			this.shootLight();
+			return;
+		}
+
+		this.resetShootingTime();
+	}
+
+	private shootLight() {
 		if (!this.isShootingTime) return;
 
-		const bullet = this.game.bulletsPool.getObject();
+		const bullet = this.game.lightBulletsPool.getObject();
 		if (bullet) {
 			bullet.pushInGame(
 				this.gun.x + this.gun.width * 0.5 - bullet.width * 0.5,
@@ -104,6 +111,36 @@ export class Player extends Entity implements Renderable {
 
 	private get isShootingTime(): boolean {
 		return this.shootTime > this.game.deltaTime * 2;
+	}
+
+	private handleDKeyClicked() {
+		if (!this.game.keyboard.isKeyClicked(KeyboardKeyCode.D)) return;
+		this.shootMedium();
+	}
+
+	private shootMedium() {
+		const bullet = this.game.mediumBulletsPool.getObject();
+		if (bullet) {
+			bullet.pushInGame(
+				this.gun.x + this.gun.width * 0.5 - bullet.width * 0.5,
+				this.gun.y
+			);
+		}
+	}
+
+	private handleSKeyClicked() {
+		if (!this.game.keyboard.isKeyClicked(KeyboardKeyCode.S)) return;
+		this.shootHeavy();
+	}
+
+	private shootHeavy() {
+		const bullet = this.game.heavyBulletsPool.getObject();
+		if (bullet) {
+			bullet.pushInGame(
+				this.gun.x + this.gun.width * 0.5 - bullet.width * 0.5,
+				this.gun.y
+			);
+		}
 	}
 
 	private resetShootingTime() {
@@ -142,7 +179,7 @@ export class Player extends Entity implements Renderable {
 		this.healthBar.render();
 	}
 
-	public ascceptDamage(amount = 1) {
+	public takeDamage(amount = 1) {
 		this.lives -= amount;
 	}
 }

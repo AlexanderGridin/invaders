@@ -1,10 +1,11 @@
 import { AssetName } from "App/components/GameCanvas/assetsToLoad";
-import { GameObject, Renderable } from "Game/core";
+import { Renderable } from "Game/core";
 import { checkRectanglesSimpleCollision } from "Game/core/collision-detection";
 import { Entity } from "Game/core/Entity";
 import { Game } from "Game/Game";
 import { ImgAsset } from "Game/modules/AssetsRepository";
 import { defineScale } from "Game/utils";
+import { Bullet } from "./bullets/Bullet";
 import { HealthBar } from "./HealthBar";
 
 export class Enemy extends Entity implements Renderable {
@@ -13,8 +14,7 @@ export class Enemy extends Entity implements Renderable {
 
 	public isInGame = true;
 
-	private healthBar = new GameObject({});
-	private newHealthBar!: HealthBar;
+	private healthBar!: HealthBar;
 
 	constructor(game: Game) {
 		super({
@@ -24,7 +24,7 @@ export class Enemy extends Entity implements Renderable {
 
 		this.game = game;
 
-		this.newHealthBar = new HealthBar({
+		this.healthBar = new HealthBar({
 			game: this.game,
 			entity: this,
 			offsetXMultip: 0.3,
@@ -35,17 +35,27 @@ export class Enemy extends Entity implements Renderable {
 		this.init();
 	}
 
-	public init() {
+	private init() {
+		this.initAsset();
+		this.initSize();
+		this.initPosition();
+	}
+
+	private initAsset() {
 		const asset = this.game.assetsRepo.getAsset<AssetName, ImgAsset>(
 			"enemy-hard"
 		);
 		if (!asset) return;
 		this.asset = asset;
+	}
 
+	private initSize() {
 		this.scale = defineScale(120, this.asset.width);
 		this.width = this.asset.width * this.scale;
 		this.height = this.asset.height * this.scale;
+	}
 
+	private initPosition() {
 		this.x = this.game.renderer.canvasWidth * 0.5 - this.width * 0.5;
 	}
 
@@ -58,33 +68,42 @@ export class Enemy extends Entity implements Renderable {
 			this.y >= this.game.renderer.canvasHeight - this.height ||
 			checkRectanglesSimpleCollision({ a: this, b: this.game.player })
 		) {
-			this.game.player.ascceptDamage();
+			this.game.player.takeDamage();
 			this.pullFromGame();
 		}
 
-		this.game.bulletsPool.forEachInGame((bullet) => {
-			if (!checkRectanglesSimpleCollision({ a: this, b: bullet })) {
-				return;
-			}
+		this.game.lightBulletsPool.forEachInGame(
+			this.handleBulletCollision.bind(this)
+		);
+		this.game.mediumBulletsPool.forEachInGame(
+			this.handleBulletCollision.bind(this)
+		);
+		this.game.heavyBulletsPool.forEachInGame(
+			this.handleBulletCollision.bind(this)
+		);
 
-			this.decreaseLives(bullet.damage);
-			bullet.pullFromGame();
+		this.healthBar.update();
+	}
 
-			if (this.lives === 0) {
-				this.pullFromGame();
-			}
-		});
+	private handleBulletCollision(bullet: Bullet) {
+		if (!checkRectanglesSimpleCollision({ a: this, b: bullet })) {
+			return;
+		}
 
-		this.newHealthBar.update();
+		this.takeDamage(bullet.damage);
+		bullet.pullFromGame();
+
+		if (this.lives <= 0) {
+			this.pullFromGame();
+		}
 	}
 
 	private pullFromGame() {
 		this.isInGame = false;
 	}
 
-	private decreaseLives(amount = 1) {
+	private takeDamage(amount = 1) {
 		this.lives -= amount;
-		this.healthBar.width -= 5;
 	}
 
 	public render() {
@@ -95,7 +114,7 @@ export class Enemy extends Entity implements Renderable {
 			obj: this,
 		});
 
-		this.newHealthBar.render();
+		this.healthBar.render();
 
 		if (this.game.isDebug) {
 			this.game.renderer.strokeRect({ obj: this });

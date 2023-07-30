@@ -8,19 +8,22 @@ export class Bullet extends ObjectsPoolEntity {
 	public damage = 1;
 
 	private speed = 10;
-	private asset!: ImgAsset;
+
+	protected asset!: ImgAsset;
+	protected maxWidth = 7;
 
 	constructor(game: Game) {
-		super({ game, width: 5, height: 10 });
-		this.init();
+		super({ game });
 	}
 
-	public init() {
-		const asset = this.game.assetsRepo.getAsset<AssetName, ImgAsset>("bullet");
-		if (!asset) return;
+	public initAsset(assetName: AssetName) {
+		const asset = this.game.assetsRepo.getAsset<AssetName, ImgAsset>(assetName);
+		if (!asset) throw new Error("Asset for bullet is not found!");
 		this.asset = asset;
+	}
 
-		this.scale = defineScale(7, this.asset.width);
+	public initSize() {
+		this.scale = defineScale(this.maxWidth, this.asset.width);
 		this.width = this.asset.width * this.scale;
 		this.height = this.asset.height * this.scale;
 	}
