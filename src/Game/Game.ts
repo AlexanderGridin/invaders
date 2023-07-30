@@ -1,7 +1,8 @@
 import { Renderable } from "./core";
 import { Player } from "./entities";
 import { HeavyBullet, LightBullet, MediumBullet } from "./entities/bullets";
-import { Enemy } from "./entities/Enemy";
+import { LightEnemy, MediumEnemy, RegularEnemy } from "./entities/enemies";
+import { HeavyEnemy } from "./entities/enemies/HeavyEnemy";
 import { AssetsRepository, AssetToLoad } from "./modules/AssetsRepository";
 import { Keyboard } from "./modules/Keyboard";
 import { KeyboardKeyCode } from "./modules/Keyboard/enums";
@@ -15,7 +16,11 @@ export class Game {
 	public keyboard = new Keyboard();
 
 	public player!: Player;
-	public enemy!: Enemy;
+
+	public lightEnemy!: LightEnemy;
+	public regularEnemy!: RegularEnemy;
+	public mediumEnemy!: MediumEnemy;
+	public heavyEnemy!: HeavyEnemy;
 
 	public lightBulletsPool!: ObjectsPool<LightBullet>;
 	public mediumBulletsPool!: ObjectsPool<MediumBullet>;
@@ -33,7 +38,7 @@ export class Game {
 		this.renderer = new Renderer(canvas);
 	}
 
-	start() {
+	public start() {
 		console.log("Start!!!");
 
 		this.isInProgress = true;
@@ -41,8 +46,12 @@ export class Game {
 	}
 
 	public init() {
+		this.lightEnemy = new LightEnemy(this);
+		this.regularEnemy = new RegularEnemy(this);
+		this.mediumEnemy = new MediumEnemy(this);
+		this.heavyEnemy = new HeavyEnemy(this);
+
 		this.player = new Player(this);
-		this.enemy = new Enemy(this);
 
 		this.lightBulletsPool = new ObjectsPool<LightBullet>({
 			game: this,
@@ -61,15 +70,21 @@ export class Game {
 		});
 
 		this.renderables = [
-			this.enemy,
+			// Enemies
+			this.lightEnemy,
+			this.regularEnemy,
+			this.mediumEnemy,
+			this.heavyEnemy,
+			// Bullets
 			this.lightBulletsPool,
 			this.mediumBulletsPool,
 			this.heavyBulletsPool,
+			// Player
 			this.player,
 		];
 	}
 
-	renderGameFrame(frameTime: number) {
+	private renderGameFrame(frameTime: number) {
 		this.deltaTime = Math.floor(frameTime - this.prevFrameTime);
 		this.prevFrameTime = frameTime;
 
@@ -115,15 +130,15 @@ export class Game {
 		});
 	}
 
-	stop() {
+	public stop() {
 		this.isInProgress = false;
 	}
 
-	resume() {
+	public resume() {
 		this.isInProgress = true;
 	}
 
-	restart() {
+	public restart() {
 		// this.player = new Player(this);
 		// this.enemiesPool.reset();
 		// this.bulletsPool.reset();

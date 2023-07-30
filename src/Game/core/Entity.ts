@@ -6,7 +6,7 @@ export interface EntityConfig extends GameObjectConfig {
 }
 
 export class Entity extends GameObject {
-	public lives: number;
+	public lives = 0;
 	public speed: number;
 
 	constructor({ lives, speed, ...gameObjectConfig }: EntityConfig) {
