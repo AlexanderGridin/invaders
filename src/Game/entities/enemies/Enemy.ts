@@ -78,13 +78,7 @@ export class Enemy extends Entity implements Renderable {
 			this.pullFromGame();
 		}
 
-		this.game.lightBulletsPool.forEachInGame(
-			this.handleBulletCollision.bind(this)
-		);
-		this.game.mediumBulletsPool.forEachInGame(
-			this.handleBulletCollision.bind(this)
-		);
-		this.game.heavyBulletsPool.forEachInGame(
+		this.game.bulletsManager.forEachInGame(
 			this.handleBulletCollision.bind(this)
 		);
 
