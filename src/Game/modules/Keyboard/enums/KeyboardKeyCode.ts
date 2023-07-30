@@ -7,4 +7,5 @@ export enum KeyboardKeyCode {
 	P = "p",
 	R = "r",
 	D = "d",
+	S = "s",
 }

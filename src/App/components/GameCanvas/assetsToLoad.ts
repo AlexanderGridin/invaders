@@ -7,7 +7,9 @@ export type AssetName =
 	| "enemy-light"
 	| "enemy-regular"
 	| "enemy-medium"
-	| "bullet"
+	| "light-bullet"
+	| "medium-bullet"
+	| "heavy-bullet"
 	| "enemy-hard";
 
 export const assetsToLoad: AssetToLoad[] = [
@@ -40,7 +42,15 @@ export const assetsToLoad: AssetToLoad[] = [
 		src: "/assets/THard.png",
 	},
 	{
-		name: "bullet",
+		name: "light-bullet",
 		src: "/assets/Light_Shell.png",
+	},
+	{
+		name: "medium-bullet",
+		src: "/assets/Medium_Shell.png",
+	},
+	{
+		name: "heavy-bullet",
+		src: "/assets/Heavy_Shell.png",
 	},
 ];
