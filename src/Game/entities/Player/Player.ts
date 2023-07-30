@@ -56,34 +56,41 @@ export class Player extends Entity implements Renderable {
 	}
 
 	public update() {
-		this.handleSelfUpdate();
+		this.selfUpdate();
 
 		this.gun.update();
 		this.base.update();
 		this.healthBar.update();
 	}
 
-	private handleSelfUpdate() {
+	private selfUpdate() {
 		this.shootTime += this.game.deltaTime;
 
-		if (this.game.keyboard.isKeyPressed(KeyboardKeyCode.J)) {
-			this.moveLeft();
-		}
-
-		if (this.game.keyboard.isKeyPressed(KeyboardKeyCode.K)) {
-			this.moveRight();
-		}
-
-		if (this.game.keyboard.isKeyPressed(KeyboardKeyCode.SPACE)) {
-			this.boostSpeed();
-		} else {
-			this.resetSpeed();
-		}
-
+		this.handleJKeyPressed();
+		this.handleKKeyPressed();
+		this.handleSpaceKeyPressed();
 		this.handleFKeyPressed();
-
 		this.handleDKeyClicked();
 		this.handleSKeyClicked();
+	}
+
+	private handleJKeyPressed() {
+		if (!this.game.keyboard.isKeyPressed(KeyboardKeyCode.J)) return;
+		this.moveLeft();
+	}
+
+	private handleKKeyPressed() {
+		if (!this.game.keyboard.isKeyPressed(KeyboardKeyCode.K)) return;
+		this.moveRight();
+	}
+
+	private handleSpaceKeyPressed() {
+		if (this.game.keyboard.isKeyPressed(KeyboardKeyCode.SPACE)) {
+			this.boostSpeed();
+			return;
+		}
+
+		this.resetSpeed();
 	}
 
 	private handleFKeyPressed() {
@@ -98,7 +105,7 @@ export class Player extends Entity implements Renderable {
 	private shootLight() {
 		if (!this.isShootingTime) return;
 
-		const bullet = this.game.bulletsManager.getLight();
+		const bullet = this.game.bulletsManager.getBullet("light");
 		if (bullet) {
 			bullet.pushInGame(
 				this.gun.x + this.gun.width * 0.5 - bullet.width * 0.5,
@@ -119,7 +126,7 @@ export class Player extends Entity implements Renderable {
 	}
 
 	private shootMedium() {
-		const bullet = this.game.bulletsManager.getMedium();
+		const bullet = this.game.bulletsManager.getBullet("medium");
 		if (bullet) {
 			bullet.pushInGame(
 				this.gun.x + this.gun.width * 0.5 - bullet.width * 0.5,
@@ -134,7 +141,7 @@ export class Player extends Entity implements Renderable {
 	}
 
 	private shootHeavy() {
-		const bullet = this.game.bulletsManager.getHeavy();
+		const bullet = this.game.bulletsManager.getBullet("heavy");
 		if (bullet) {
 			bullet.pushInGame(
 				this.gun.x + this.gun.width * 0.5 - bullet.width * 0.5,

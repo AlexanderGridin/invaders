@@ -6,6 +6,8 @@ import { HeavyBullet } from "./HeavyBullet";
 import { LightBullet } from "./LightBullet";
 import { MediumBullet } from "./MediumBullet";
 
+type BulletType = "light" | "medium" | "heavy";
+
 export class BulletsManager implements Renderable {
 	private lightBulletsPool!: ObjectsPool<LightBullet>;
 	private mediumBulletsPool!: ObjectsPool<MediumBullet>;
@@ -29,16 +31,22 @@ export class BulletsManager implements Renderable {
 		});
 	}
 
-	public getLight(): LightBullet | null {
-		return this.lightBulletsPool.getObject();
-	}
+	public getBullet(
+		type: BulletType
+	): LightBullet | MediumBullet | HeavyBullet | null {
+		switch (type) {
+			case "light":
+				return this.lightBulletsPool.getObject();
 
-	public getMedium(): MediumBullet | null {
-		return this.mediumBulletsPool.getObject();
-	}
+			case "medium":
+				return this.mediumBulletsPool.getObject();
 
-	public getHeavy(): HeavyBullet | null {
-		return this.heavyBulletsPool.getObject();
+			case "heavy":
+				return this.heavyBulletsPool.getObject();
+
+			default:
+				throw new Error("Unknown bullet type");
+		}
 	}
 
 	public forEachInGame(cb: (bullet: Bullet) => void) {
