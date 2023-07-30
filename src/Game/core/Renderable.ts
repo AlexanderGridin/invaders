@@ -1,4 +1,4 @@
 export interface Renderable {
-	update: () => void;
-	render: () => void;
+  update: () => void;
+  render: () => void;
 }

@@ -1,18 +1,18 @@
 import { GameObject, GameObjectConfig } from "./GameObject";
 
 export interface EntityConfig extends GameObjectConfig {
-	lives: number;
-	speed: number;
+  lives: number;
+  speed: number;
 }
 
 export class Entity extends GameObject {
-	public lives = 0;
-	public speed: number;
+  public lives = 0;
+  public speed: number;
 
-	constructor({ lives, speed, ...gameObjectConfig }: EntityConfig) {
-		super({ ...gameObjectConfig });
+  constructor({ lives, speed, ...gameObjectConfig }: EntityConfig) {
+    super({ ...gameObjectConfig });
 
-		this.lives = lives;
-		this.speed = speed;
-	}
+    this.lives = lives;
+    this.speed = speed;
+  }
 }

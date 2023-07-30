@@ -1,15 +1,15 @@
 .table {
-	border-collapse: collapse;
-	width: 100%;
+  border-collapse: collapse;
+  width: 100%;
 }
 
 .table td {
-	border: 1px solid white;
-	padding: 5px;
+  border: 1px solid white;
+  padding: 5px;
 }
 
 .table tr td:last-child {
-	text-align: center;
-	background-color: #5e81ac;
-	font-weight: bold;
+  text-align: center;
+  background-color: #5e81ac;
+  font-weight: bold;
 }

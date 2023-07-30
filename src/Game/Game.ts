@@ -9,126 +9,126 @@ import { KeyboardKeyCode } from "./modules/Keyboard/enums";
 import { Renderer } from "./modules/Renderer/Renderer";
 
 export class Game {
-	public renderer: Renderer;
-	public assetsRepo = new AssetsRepository();
+  public renderer: Renderer;
+  public assetsRepo = new AssetsRepository();
 
-	public keyboard = new Keyboard();
+  public keyboard = new Keyboard();
 
-	public player!: Player;
+  public player!: Player;
 
-	public lightEnemy!: LightEnemy;
-	public regularEnemy!: RegularEnemy;
-	public mediumEnemy!: MediumEnemy;
-	public heavyEnemy!: HeavyEnemy;
+  public lightEnemy!: LightEnemy;
+  public regularEnemy!: RegularEnemy;
+  public mediumEnemy!: MediumEnemy;
+  public heavyEnemy!: HeavyEnemy;
 
-	public bulletsManager!: BulletsManager;
+  public bulletsManager!: BulletsManager;
 
-	private renderables: Renderable[] = [];
+  private renderables: Renderable[] = [];
 
-	private isInProgress = false;
-	public isDebug = false;
+  private isInProgress = false;
+  public isDebug = false;
 
-	private prevFrameTime = 0;
-	public deltaTime = 0;
+  private prevFrameTime = 0;
+  public deltaTime = 0;
 
-	constructor(canvas: HTMLCanvasElement | null) {
-		this.renderer = new Renderer(canvas);
-	}
+  constructor(canvas: HTMLCanvasElement | null) {
+    this.renderer = new Renderer(canvas);
+  }
 
-	public start() {
-		console.log("Start!!!");
+  public start() {
+    console.log("Start!!!");
 
-		this.isInProgress = true;
-		this.renderGameFrame(0);
-	}
+    this.isInProgress = true;
+    this.renderGameFrame(0);
+  }
 
-	public init() {
-		this.lightEnemy = new LightEnemy(this);
-		this.regularEnemy = new RegularEnemy(this);
-		this.mediumEnemy = new MediumEnemy(this);
-		this.heavyEnemy = new HeavyEnemy(this);
+  public init() {
+    this.lightEnemy = new LightEnemy(this);
+    this.regularEnemy = new RegularEnemy(this);
+    this.mediumEnemy = new MediumEnemy(this);
+    this.heavyEnemy = new HeavyEnemy(this);
 
-		this.player = new Player(this);
-		this.bulletsManager = new BulletsManager(this);
+    this.player = new Player(this);
+    this.bulletsManager = new BulletsManager(this);
 
-		this.renderables = [
-			// Enemies
-			this.lightEnemy,
-			this.regularEnemy,
-			this.mediumEnemy,
-			this.heavyEnemy,
-			// Bullets
-			this.bulletsManager,
-			// Player
-			this.player,
-		];
-	}
+    this.renderables = [
+      // Enemies
+      this.lightEnemy,
+      this.regularEnemy,
+      this.mediumEnemy,
+      this.heavyEnemy,
+      // Bullets
+      this.bulletsManager,
+      // Player
+      this.player,
+    ];
+  }
 
-	private renderGameFrame(frameTime: number) {
-		this.deltaTime = Math.floor(frameTime - this.prevFrameTime);
-		this.prevFrameTime = frameTime;
+  private renderGameFrame(frameTime: number) {
+    this.deltaTime = Math.floor(frameTime - this.prevFrameTime);
+    this.prevFrameTime = frameTime;
 
-		if (this.isInProgress) {
-			this.renderer.clear();
+    if (this.isInProgress) {
+      this.renderer.clear();
 
-			this.update();
-			this.render();
-		}
+      this.update();
+      this.render();
+    }
 
-		this.handleCommonKeyboardEvents();
+    this.handleCommonKeyboardEvents();
 
-		requestAnimationFrame(this.renderGameFrame.bind(this));
-	}
+    requestAnimationFrame(this.renderGameFrame.bind(this));
+  }
 
-	private handleCommonKeyboardEvents(): void {
-		if (this.keyboard.isKeyClicked(KeyboardKeyCode.P)) {
-			this.isInProgress ? this.stop() : this.resume();
-		}
+  private handleCommonKeyboardEvents(): void {
+    if (this.keyboard.isKeyClicked(KeyboardKeyCode.P)) {
+      this.isInProgress ? this.stop() : this.resume();
+    }
 
-		if (this.keyboard.isKeyClicked(KeyboardKeyCode.R)) {
-			this.restart();
-		}
-	}
+    if (this.keyboard.isKeyClicked(KeyboardKeyCode.R)) {
+      this.restart();
+    }
+  }
 
-	public async loadAssets(assets: AssetToLoad[]) {
-		await this.assetsRepo.loadAssets(assets);
-	}
+  public async loadAssets(assets: AssetToLoad[]) {
+    await this.assetsRepo.loadAssets(assets);
+  }
 
-	private update() {
-		if (this.keyboard.isKeyClicked(KeyboardKeyCode.Q)) {
-			this.isDebug = !this.isDebug;
-		}
+  private update() {
+    if (this.keyboard.isKeyClicked(KeyboardKeyCode.Q)) {
+      this.isDebug = !this.isDebug;
+    }
 
-		this.renderables.forEach((renderable) => {
-			renderable.update();
-		});
-	}
+    this.renderables.forEach((renderable) => {
+      renderable.update();
+    });
+  }
 
-	private render() {
-		this.renderables.forEach((renderable) => {
-			renderable.render();
-		});
-	}
+  private render() {
+    this.renderables.forEach((renderable) => {
+      renderable.render();
+    });
+  }
 
-	public stop() {
-		this.isInProgress = false;
-	}
+  public stop() {
+    this.isInProgress = false;
+  }
 
-	public resume() {
-		this.isInProgress = true;
-	}
+  public resume() {
+    this.isInProgress = true;
+  }
 
-	public restart() {
-		// this.player = new Player(this);
-		// this.enemiesPool.reset();
-		// this.bulletsPool.reset();
+  public restart() {
+    // this.player = new Player(this);
+    // this.enemiesPool.reset();
+    // this.bulletsPool.reset();
 
-		// this.statistic.score = 0;
+    // this.statistic.score = 0;
 
-		// this.updateScoreUI();
-		// this.updateLivesUI();
-		// this.updateBulletsUI();
+    // this.updateScoreUI();
+    // this.updateLivesUI();
+    // this.updateBulletsUI();
 
-		this.isInProgress = true;
-	}
+    this.isInProgress = true;
+  }
 }
