@@ -1,3 +1,1 @@
-export * from "./LightBullet";
-export * from "./HeavyBullet";
-export * from "./MediumBullet";
+export * from "./BulletsManager";

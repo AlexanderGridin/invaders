@@ -98,7 +98,7 @@ export class Player extends Entity implements Renderable {
 	private shootLight() {
 		if (!this.isShootingTime) return;
 
-		const bullet = this.game.lightBulletsPool.getObject();
+		const bullet = this.game.bulletsManager.getLight();
 		if (bullet) {
 			bullet.pushInGame(
 				this.gun.x + this.gun.width * 0.5 - bullet.width * 0.5,
@@ -119,7 +119,7 @@ export class Player extends Entity implements Renderable {
 	}
 
 	private shootMedium() {
-		const bullet = this.game.mediumBulletsPool.getObject();
+		const bullet = this.game.bulletsManager.getMedium();
 		if (bullet) {
 			bullet.pushInGame(
 				this.gun.x + this.gun.width * 0.5 - bullet.width * 0.5,
@@ -134,7 +134,7 @@ export class Player extends Entity implements Renderable {
 	}
 
 	private shootHeavy() {
-		const bullet = this.game.heavyBulletsPool.getObject();
+		const bullet = this.game.bulletsManager.getHeavy();
 		if (bullet) {
 			bullet.pushInGame(
 				this.gun.x + this.gun.width * 0.5 - bullet.width * 0.5,
