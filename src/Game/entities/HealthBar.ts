@@ -66,11 +66,11 @@ export class HealthBar extends GameObject implements Renderable {
 	}
 
 	public render() {
-		// if (!this.initialWidth) {
-		// 	throw new Error(
-		// 		"In looks like you forgot to call init() method of the HealthBar, so it is unable to render properly..."
-		// 	);
-		// }
+		if (!this.initialWidth) {
+			throw new Error(
+				"In looks like you forgot to call init() method of the HealthBar, so it is unable to render properly..."
+			);
+		}
 
 		this.game.renderer.fillRect({ obj: this, color: this.color });
 		this.game.renderer.strokeRect({
