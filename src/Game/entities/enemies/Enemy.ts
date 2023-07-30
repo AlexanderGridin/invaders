@@ -5,8 +5,14 @@ import { Entity } from "Game/core/Entity";
 import { Game } from "Game/Game";
 import { ImgAsset } from "Game/modules/AssetsRepository";
 import { defineScale } from "Game/utils";
-import { Bullet } from "./bullets/Bullet";
-import { HealthBar } from "./HealthBar";
+import { Bullet } from "../bullets/Bullet";
+import { HealthBar } from "../HealthBar";
+
+interface EnemyConfig {
+	game: Game;
+	lives: number;
+	speed: number;
+}
 
 export class Enemy extends Entity implements Renderable {
 	private game: Game;
@@ -16,12 +22,18 @@ export class Enemy extends Entity implements Renderable {
 
 	private healthBar!: HealthBar;
 
-	constructor(game: Game) {
+	private isSlowDown = false;
+	private slowDownTime = 0;
+
+	private initialSpeed = 0;
+
+	constructor({ game, lives, speed }: EnemyConfig) {
 		super({
-			lives: 10,
-			speed: 0,
+			speed,
+			lives,
 		});
 
+		this.initialSpeed = speed;
 		this.game = game;
 
 		this.healthBar = new HealthBar({
@@ -31,32 +43,26 @@ export class Enemy extends Entity implements Renderable {
 			offsetYMultip: 0.03,
 			color: "red",
 		});
-
-		this.init();
 	}
 
-	private init() {
-		this.initAsset();
-		this.initSize();
-		this.initPosition();
-	}
-
-	private initAsset() {
-		const asset = this.game.assetsRepo.getAsset<AssetName, ImgAsset>(
-			"enemy-hard"
-		);
+	public initAsset(assetName: AssetName) {
+		const asset = this.game.assetsRepo.getAsset<AssetName, ImgAsset>(assetName);
 		if (!asset) return;
 		this.asset = asset;
 	}
 
-	private initSize() {
+	public initSize() {
 		this.scale = defineScale(120, this.asset.width);
 		this.width = this.asset.width * this.scale;
 		this.height = this.asset.height * this.scale;
 	}
 
-	private initPosition() {
-		this.x = this.game.renderer.canvasWidth * 0.5 - this.width * 0.5;
+	public initPosition(
+		x = this.game.renderer.canvasWidth * 0.5 - this.width * 0.5,
+		y = 0
+	) {
+		this.x = x;
+		this.y = y;
 	}
 
 	public update() {
@@ -82,7 +88,20 @@ export class Enemy extends Entity implements Renderable {
 			this.handleBulletCollision.bind(this)
 		);
 
+		this.handleSlowDown();
 		this.healthBar.update();
+	}
+
+	private handleSlowDown() {
+		if (!this.isSlowDown) return;
+
+		this.slowDownTime += this.game.deltaTime;
+
+		if (this.slowDownTime < 1000) return;
+
+		this.isSlowDown = false;
+		this.speed = this.initialSpeed;
+		this.slowDownTime = 0;
 	}
 
 	private handleBulletCollision(bullet: Bullet) {
@@ -91,6 +110,12 @@ export class Enemy extends Entity implements Renderable {
 		}
 
 		this.takeDamage(bullet.damage);
+
+		if (!this.isSlowDown) {
+			this.isSlowDown = true;
+			this.speed *= 0.5;
+		}
+
 		bullet.pullFromGame();
 
 		if (this.lives <= 0) {
