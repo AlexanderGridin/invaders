@@ -1,23 +1,23 @@
 .wrapper {
-	height: 100%;
-	width: 100%;
-	display: flex;
-	flex-wrap: nowrap;
+  height: 100%;
+  width: 100%;
+  display: flex;
+  flex-wrap: nowrap;
 }
 
 .sidebar,
 .content {
-	position: relative;
+  position: relative;
 }
 
 .sidebar {
-	flex-shrink: 0;
-	width: 320px;
-	z-index: 2;
+  flex-shrink: 0;
+  width: 320px;
+  z-index: 2;
 }
 
 .content {
-	background-color: #434c5e;
-	width: 100%;
-	z-index: 1;
+  background-color: #434c5e;
+  width: 100%;
+  z-index: 1;
 }

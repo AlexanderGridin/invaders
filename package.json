@@ -1,74 +1,86 @@
 {
-	"name": "react-electron-template",
-	"description": "Template app",
-	"author": {
-		"name": "Oleksandr Hridin",
-		"email": "oleksandr.hridin@gmail.com"
-	},
-	"engines": {
-		"npm": ">=8.19.3",
-		"node": ">=18.13.0"
-	},
-	"license": "ISC",
-	"version": "0.1.0",
-	"private": true,
-	"main": "public/electron.js",
-	"homepage": "./",
-	"browserslist": {
-		"production": ["last 1 electron version"],
-		"development": ["last 1 electron version"]
-	},
-	"dependencies": {
-		"@testing-library/jest-dom": "^5.16.5",
-		"@testing-library/react": "^13.4.0",
-		"@testing-library/user-event": "^13.5.0",
-		"@types/jest": "^27.5.2",
-		"@types/node": "^16.18.24",
-		"@types/react": "^18.0.38",
-		"@types/react-dom": "^18.0.11",
-		"electron-is-dev": "^2.0.0",
-		"react": "^18.2.0",
-		"react-dom": "^18.2.0",
-		"react-scripts": "5.0.1",
-		"typescript": "^4.9.5",
-		"web-vitals": "^2.1.4"
-	},
-	"scripts": {
-		"react:dev": "react-scripts start",
-		"react:build": "react-scripts build",
-		"test": "react-scripts test",
-		"electron:dev": "wait-on tcp:3000 && electron .",
-		"dev": "concurrently -k \"BROWSER=none npm run react:dev\" \"npm run electron:dev\"",
-		"electron:package:mac": "npm run react:build && electron-builder -m -c.extraMetadata.main=build/electron.js",
-		"electron:package:win": "npm run react:build && electron-builder -w -c.extraMetadata.main=build/electron.js",
-		"electron:package:linux": "npm run react:build && electron-builder -l -c.extraMetadata.main=build/electron.js",
-		"epl": "npm run react:build && electron-builder -l -c.extraMetadata.main=build/electron.js"
-	},
-	"build": {
-		"appId": "com.electron.myapp",
-		"productName": "Template app",
-		"files": ["build/**/*", "node_modules/**/*"],
-		"directories": {
-			"buildResources": "public"
-		},
-		"mac": {
-			"target": "dmg"
-		},
-		"win": {
-			"target": "nsis"
-		},
-		"linux": {
-			"target": "deb"
-		}
-	},
-	"eslintConfig": {
-		"extends": ["react-app", "react-app/jest"]
-	},
-	"devDependencies": {
-		"concurrently": "^8.0.1",
-		"electron": "^24.1.2",
-		"electron-builder": "^23.6.0",
-		"prettier": "^2.8.7",
-		"wait-on": "^7.0.1"
-	}
+  "name": "react-electron-template",
+  "description": "Template app",
+  "author": {
+    "name": "Oleksandr Hridin",
+    "email": "oleksandr.hridin@gmail.com"
+  },
+  "engines": {
+    "npm": ">=8.19.3",
+    "node": ">=18.13.0"
+  },
+  "license": "ISC",
+  "version": "0.1.0",
+  "private": true,
+  "main": "public/electron.js",
+  "homepage": "./",
+  "browserslist": {
+    "production": [
+      "last 1 electron version"
+    ],
+    "development": [
+      "last 1 electron version"
+    ]
+  },
+  "dependencies": {
+    "@testing-library/jest-dom": "^5.16.5",
+    "@testing-library/react": "^13.4.0",
+    "@testing-library/user-event": "^13.5.0",
+    "@types/jest": "^27.5.2",
+    "@types/node": "^16.18.24",
+    "@types/react": "^18.0.38",
+    "@types/react-dom": "^18.0.11",
+    "electron-is-dev": "^2.0.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-scripts": "5.0.1",
+    "typescript": "^4.9.5",
+    "web-vitals": "^2.1.4"
+  },
+  "scripts": {
+    "react:dev": "react-scripts start",
+    "react:build": "react-scripts build",
+    "test": "react-scripts test",
+    "electron:dev": "wait-on tcp:3000 && electron .",
+    "dev": "concurrently -k \"BROWSER=none npm run react:dev\" \"npm run electron:dev\"",
+    "electron:package:mac": "npm run react:build && electron-builder -m -c.extraMetadata.main=build/electron.js",
+    "electron:package:win": "npm run react:build && electron-builder -w -c.extraMetadata.main=build/electron.js",
+    "electron:package:linux": "npm run react:build && electron-builder -l -c.extraMetadata.main=build/electron.js",
+    "epl": "npm run react:build && electron-builder -l -c.extraMetadata.main=build/electron.js",
+    "prettier": "npx prettier --write ./",
+    "prettier-check": "npx prettier --check ./"
+  },
+  "build": {
+    "appId": "com.electron.myapp",
+    "productName": "Template app",
+    "files": [
+      "build/**/*",
+      "node_modules/**/*"
+    ],
+    "directories": {
+      "buildResources": "public"
+    },
+    "mac": {
+      "target": "dmg"
+    },
+    "win": {
+      "target": "nsis"
+    },
+    "linux": {
+      "target": "deb"
+    }
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
+  },
+  "devDependencies": {
+    "concurrently": "^8.0.1",
+    "electron": "^24.1.2",
+    "electron-builder": "^23.6.0",
+    "prettier": "^2.8.7",
+    "wait-on": "^7.0.1"
+  }
 }
