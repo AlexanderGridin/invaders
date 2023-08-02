@@ -11,6 +11,5 @@ export class LightEnemy extends Enemy {
 
     this.initAsset("enemy-light");
     this.initSize();
-    this.initPosition(0, 0);
   }
 }

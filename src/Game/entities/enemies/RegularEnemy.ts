@@ -11,6 +11,5 @@ export class RegularEnemy extends Enemy {
 
     this.initAsset("enemy-regular");
     this.initSize();
-    this.initPosition(this.width + 15, 0);
   }
 }

@@ -11,6 +11,5 @@ export class HeavyEnemy extends Enemy {
 
     this.initAsset("enemy-hard");
     this.initSize();
-    this.initPosition(this.width * 3 + 45, 0);
   }
 }
