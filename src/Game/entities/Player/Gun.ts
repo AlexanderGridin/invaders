@@ -21,7 +21,6 @@ export class Gun extends GameObject implements Renderable {
   }
 
   private initAsset() {
-    // const asset = this.game.assetsRepo.getAsset<AssetName, ImgAsset>("player-gun");
     const asset = this.game.assetsRepo.getAsset<AssetName, ImgAsset>("t-gun");
 
     if (!asset) return;

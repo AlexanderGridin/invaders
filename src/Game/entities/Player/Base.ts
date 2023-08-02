@@ -21,7 +21,6 @@ export class Base extends GameObject implements Renderable {
   }
 
   private initAsset() {
-    // const asset = this.game.assetsRepo.getAsset<AssetName, ImgAsset>("player-base");
     const asset = this.game.assetsRepo.getAsset<AssetName, ImgAsset>("t-base");
 
     if (!asset) return;

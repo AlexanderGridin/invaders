@@ -1,9 +1,8 @@
 import { AssetName } from "App/components/GameCanvas/assetsToLoad";
-import { Renderable } from "Game/core";
 import { checkRectanglesSimpleCollision } from "Game/core/collision-detection";
-import { Entity } from "Game/core/Entity";
 import { Game } from "Game/Game";
 import { ImgAsset } from "Game/modules/AssetsRepository";
+import { ObjectsPoolEntity } from "Game/modules/ObjectsPool/ObjectsPoolEntity";
 import { defineScale } from "Game/utils";
 import { Bullet } from "../bullets/Bullet";
 import { HealthBar } from "../HealthBar";
@@ -14,11 +13,11 @@ interface EnemyConfig {
   speed: number;
 }
 
-export class Enemy extends Entity implements Renderable {
-  private game: Game;
-  private asset!: ImgAsset;
+export class Enemy extends ObjectsPoolEntity {
+  public lives = 0;
+  public speed = 0;
 
-  public isInGame = true;
+  private asset!: ImgAsset;
 
   private healthBar!: HealthBar;
 
@@ -29,15 +28,15 @@ export class Enemy extends Entity implements Renderable {
 
   constructor({ game, lives, speed }: EnemyConfig) {
     super({
-      speed,
-      lives,
+      game,
     });
 
+    this.lives = lives;
     this.initialSpeed = speed;
-    this.game = game;
+    this.speed = this.initialSpeed;
 
     this.healthBar = new HealthBar({
-      game: this.game,
+      game,
       entity: this,
       offsetXMultip: 0.3,
       offsetYMultip: 0.03,
@@ -55,11 +54,6 @@ export class Enemy extends Entity implements Renderable {
     this.scale = defineScale(120, this.asset.width);
     this.width = this.asset.width * this.scale;
     this.height = this.asset.height * this.scale;
-  }
-
-  public initPosition(x = this.game.renderer.canvasWidth * 0.5 - this.width * 0.5, y = 0) {
-    this.x = x;
-    this.y = y;
   }
 
   public update() {
@@ -110,10 +104,6 @@ export class Enemy extends Entity implements Renderable {
     if (this.lives <= 0) {
       this.pullFromGame();
     }
-  }
-
-  private pullFromGame() {
-    this.isInGame = false;
   }
 
   private takeDamage(amount = 1) {

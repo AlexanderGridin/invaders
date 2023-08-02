@@ -1,8 +1,7 @@
 import { Renderable } from "./core";
 import { Player } from "./entities";
 import { BulletsManager } from "./entities/bullets";
-import { LightEnemy, MediumEnemy, RegularEnemy } from "./entities/enemies";
-import { HeavyEnemy } from "./entities/enemies/HeavyEnemy";
+import { EnemiesManager } from "./entities/enemies";
 import { AssetsRepository, AssetToLoad } from "./modules/AssetsRepository";
 import { Keyboard } from "./modules/Keyboard";
 import { KeyboardKeyCode } from "./modules/Keyboard/enums";
@@ -16,12 +15,8 @@ export class Game {
 
   public player!: Player;
 
-  public lightEnemy!: LightEnemy;
-  public regularEnemy!: RegularEnemy;
-  public mediumEnemy!: MediumEnemy;
-  public heavyEnemy!: HeavyEnemy;
-
   public bulletsManager!: BulletsManager;
+  public enemiesManager!: EnemiesManager;
 
   private renderables: Renderable[] = [];
 
@@ -38,27 +33,25 @@ export class Game {
   public start() {
     console.log("Start!!!");
 
+    this.enemiesManager.getEnemy("light")?.pushInGame(0, 0);
+    this.enemiesManager.getEnemy("regular")?.pushInGame(200, 0);
+    this.enemiesManager.getEnemy("medium")?.pushInGame(400, 0);
+    this.enemiesManager.getEnemy("heavy")?.pushInGame(600, 0);
+
     this.isInProgress = true;
     this.renderGameFrame(0);
   }
 
   public init() {
-    this.lightEnemy = new LightEnemy(this);
-    this.regularEnemy = new RegularEnemy(this);
-    this.mediumEnemy = new MediumEnemy(this);
-    this.heavyEnemy = new HeavyEnemy(this);
-
     this.player = new Player(this);
     this.bulletsManager = new BulletsManager(this);
+    this.enemiesManager = new EnemiesManager(this);
 
     this.renderables = [
       // Bullets
       this.bulletsManager,
       // Enemies
-      this.lightEnemy,
-      this.regularEnemy,
-      this.mediumEnemy,
-      this.heavyEnemy,
+      this.enemiesManager,
       // Player
       this.player,
     ];
@@ -101,10 +94,7 @@ export class Game {
 
     this.player.update();
     this.bulletsManager.update();
-    this.lightEnemy.update();
-    this.regularEnemy.update();
-    this.mediumEnemy.update();
-    this.heavyEnemy.update();
+    this.enemiesManager.update();
   }
 
   private render() {

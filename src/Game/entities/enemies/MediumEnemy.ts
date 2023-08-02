@@ -11,6 +11,5 @@ export class MediumEnemy extends Enemy {
 
     this.initAsset("enemy-medium");
     this.initSize();
-    this.initPosition(this.width * 2 + 30);
   }
 }
