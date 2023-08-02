@@ -52,13 +52,13 @@ export class Game {
     this.bulletsManager = new BulletsManager(this);
 
     this.renderables = [
+      // Bullets
+      this.bulletsManager,
       // Enemies
       this.lightEnemy,
       this.regularEnemy,
       this.mediumEnemy,
       this.heavyEnemy,
-      // Bullets
-      this.bulletsManager,
       // Player
       this.player,
     ];
@@ -99,9 +99,12 @@ export class Game {
       this.isDebug = !this.isDebug;
     }
 
-    this.renderables.forEach((renderable) => {
-      renderable.update();
-    });
+    this.player.update();
+    this.bulletsManager.update();
+    this.lightEnemy.update();
+    this.regularEnemy.update();
+    this.mediumEnemy.update();
+    this.heavyEnemy.update();
   }
 
   private render() {

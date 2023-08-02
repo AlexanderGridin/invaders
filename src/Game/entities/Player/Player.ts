@@ -15,8 +15,8 @@ export class Player extends Entity implements Renderable {
   private initialSpeed = this.speed;
   private speedBoost = 5;
 
-  private gun: Gun;
-  private base: Base;
+  public gun: Gun;
+  public base: Base;
 
   private shootTime = 0;
 
@@ -39,9 +39,9 @@ export class Player extends Entity implements Renderable {
     this.healthBar = new HealthBar({
       game: this.game,
       entity: this,
-      color: "green",
+      color: "yellow",
       offsetXMultip: 0.65,
-      offsetYMultip: 0.17,
+      offsetYMultip: -0.1,
     });
   }
 
@@ -114,7 +114,7 @@ export class Player extends Entity implements Renderable {
   }
 
   private get isShootingTime(): boolean {
-    return this.shootTime > this.game.deltaTime * 2;
+    return this.shootTime > this.game.deltaTime * 3;
   }
 
   private handleDKeyClicked() {
@@ -145,7 +145,7 @@ export class Player extends Entity implements Renderable {
     this.shootTime = 0;
   }
 
-  moveLeft() {
+  private moveLeft() {
     if (this.x > 0 - this.width * 0.5) {
       this.x -= this.speed;
       return;
@@ -154,7 +154,7 @@ export class Player extends Entity implements Renderable {
     this.x = 0 - this.width * 0.5;
   }
 
-  moveRight() {
+  private moveRight() {
     if (this.x + this.width * 0.5 < this.game.renderer.canvasWidth) {
       this.x += this.speed;
       return;
