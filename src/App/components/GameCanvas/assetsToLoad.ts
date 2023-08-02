@@ -10,6 +10,8 @@ export type AssetName =
   | "light-bullet"
   | "medium-bullet"
   | "heavy-bullet"
+  | "t-base"
+  | "t-gun"
   | "enemy-hard";
 
 export const assetsToLoad: AssetToLoad[] = [
@@ -52,5 +54,13 @@ export const assetsToLoad: AssetToLoad[] = [
   {
     name: "heavy-bullet",
     src: "/assets/Heavy_Shell.png",
+  },
+  {
+    name: "t-base",
+    src: "/assets/tbase.png",
+  },
+  {
+    name: "t-gun",
+    src: "/assets/tgun.png",
   },
 ];
