@@ -1,4 +1,4 @@
-import { GameObject } from "Game/core";
+import { GameObject, Renderable } from "Game/core";
 import { Game } from "Game/Game";
 
 interface GridCellConfig {
@@ -11,7 +11,7 @@ interface GridCellConfig {
   columnIndex: number;
 }
 
-export class GridCell extends GameObject {
+export class GridCell extends GameObject implements Renderable {
   private game: Game;
 
   public rowIndex: number;
@@ -26,7 +26,7 @@ export class GridCell extends GameObject {
     this.columnIndex = columnIndex;
   }
 
-  render() {
+  public render() {
     if (!this.game.isDebug) return;
 
     this.game.renderer.strokeRect({
@@ -34,4 +34,6 @@ export class GridCell extends GameObject {
       color: "#BF616A",
     });
   }
+
+  public update() {}
 }
