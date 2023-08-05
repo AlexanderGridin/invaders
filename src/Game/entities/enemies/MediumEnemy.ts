@@ -6,10 +6,10 @@ export class MediumEnemy extends Enemy {
     super({
       game,
       lives: 20,
-      speed: 1,
+      speed: 0,
     });
 
-    this.initAsset("enemy-medium");
+    this.initAsset("tm");
     this.initSize();
   }
 }

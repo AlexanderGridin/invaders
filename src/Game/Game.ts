@@ -62,11 +62,11 @@ export class Game {
     this.prevFrameTime = frameTime;
 
     if (this.isInProgress) {
-      this.renderer.clear();
-
       this.update();
-      this.render();
     }
+
+    this.renderer.clear();
+    this.render();
 
     this.handleCommonKeyboardEvents();
 
@@ -81,6 +81,10 @@ export class Game {
     if (this.keyboard.isKeyClicked(KeyboardKeyCode.R)) {
       this.restart();
     }
+
+    if (this.keyboard.isKeyClicked(KeyboardKeyCode.Q)) {
+      this.isDebug = !this.isDebug;
+    }
   }
 
   public async loadAssets(assets: AssetToLoad[]) {
@@ -88,10 +92,6 @@ export class Game {
   }
 
   private update() {
-    if (this.keyboard.isKeyClicked(KeyboardKeyCode.Q)) {
-      this.isDebug = !this.isDebug;
-    }
-
     this.player.update();
     this.bulletsManager.update();
     this.enemiesManager.update();
