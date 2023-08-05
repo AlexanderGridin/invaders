@@ -1,4 +1,7 @@
 .canvas {
   display: block;
   /* background-image: url(./assets/bg-3-sm.png); */
+  /* background-image: url(./assets/bgg8.png); */
+  /* background-size: 100px 100px; */
+  background-color: #000;
 }

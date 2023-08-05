@@ -6,10 +6,11 @@ export class HeavyEnemy extends Enemy {
     super({
       game,
       lives: 30,
-      speed: 0.5,
+      // speed: 0.5,
+      speed: 0,
     });
 
-    this.initAsset("enemy-hard");
+    this.initAsset("th");
     this.initSize();
   }
 }
