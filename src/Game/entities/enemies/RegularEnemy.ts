@@ -6,7 +6,7 @@ export class RegularEnemy extends Enemy {
     super({
       game,
       lives: 10,
-      speed: 0,
+      speed: 1.5,
     });
 
     this.initAsset("tr");

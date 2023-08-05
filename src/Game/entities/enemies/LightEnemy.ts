@@ -6,8 +6,7 @@ export class LightEnemy extends Enemy {
     super({
       game,
       lives: 5,
-      // speed: 2,
-      speed: 0,
+      speed: 2,
     });
 
     this.initAsset("tl");

@@ -1,5 +1,6 @@
 import { Game } from "Game/Game";
 import { ObjectsPool } from "Game/modules/ObjectsPool";
+import { Enemy } from "./Enemy";
 import { HeavyEnemy } from "./HeavyEnemy";
 import { LightEnemy } from "./LightEnemy";
 import { MediumEnemy } from "./MediumEnemy";
@@ -70,5 +71,32 @@ export class EnemiesManager {
     this.regularPool.render();
     this.mediumPool.render();
     this.heavyPool.render();
+  }
+
+  public forEachInGame(cb: (enemy: Enemy) => void) {
+    this.lightPool.forEachInGame(cb);
+    this.regularPool.forEachInGame(cb);
+    this.mediumPool.forEachInGame(cb);
+    this.heavyPool.forEachInGame(cb);
+  }
+
+  public findInGame(cb: (enemy: Enemy) => boolean): Enemy | undefined {
+    const enemies = [
+      ...this.lightPool.pool,
+      ...this.regularPool.pool,
+      ...this.mediumPool.pool,
+      ...this.heavyPool.pool,
+    ] as Enemy[];
+
+    return enemies.find((enemy) => enemy.isInGame && cb(enemy));
+  }
+
+  public getAll(): Enemy[] {
+    return [
+      ...this.lightPool.pool,
+      ...this.regularPool.pool,
+      ...this.mediumPool.pool,
+      ...this.heavyPool.pool,
+    ] as Enemy[];
   }
 }

@@ -3,11 +3,23 @@ import { Player } from "./entities";
 import { BulletsManager } from "./entities/bullets";
 import { EnemiesManager } from "./entities/enemies";
 import { AssetsRepository, AssetToLoad } from "./modules/AssetsRepository";
+import { Counter } from "./modules/Counter";
+import { Grid } from "./modules/Grid";
 import { Keyboard } from "./modules/Keyboard";
 import { KeyboardKeyCode } from "./modules/Keyboard/enums";
 import { Renderer } from "./modules/Renderer/Renderer";
 
 export class Game {
+  public config = {
+    enemies: {
+      grid: {
+        cellSize: 120,
+        totalRows: 1,
+      },
+      spawnEachMs: 500,
+    },
+  };
+
   public renderer: Renderer;
   public assetsRepo = new AssetsRepository();
 
@@ -17,7 +29,8 @@ export class Game {
 
   public bulletsManager!: BulletsManager;
   public enemiesManager!: EnemiesManager;
-
+  private enemiesCounter = new Counter();
+  public enemiesGrid!: Grid;
   private renderables: Renderable[] = [];
 
   private isInProgress = false;
@@ -32,11 +45,13 @@ export class Game {
 
   public start() {
     console.log("Start!!!");
+    setInterval(() => {
+      console.log("enemy tick");
 
-    this.enemiesManager.getEnemy("light")?.pushInGame(0, 0);
-    this.enemiesManager.getEnemy("regular")?.pushInGame(200, 0);
-    this.enemiesManager.getEnemy("medium")?.pushInGame(400, 0);
-    this.enemiesManager.getEnemy("heavy")?.pushInGame(600, 0);
+      if (this.isInProgress) {
+        this.spawnEnemy();
+      }
+    }, this.config.enemies.spawnEachMs);
 
     this.isInProgress = true;
     this.renderGameFrame(0);
@@ -47,11 +62,19 @@ export class Game {
     this.bulletsManager = new BulletsManager(this);
     this.enemiesManager = new EnemiesManager(this);
 
+    this.enemiesGrid = new Grid({
+      game: this,
+      totalRows: this.config.enemies.grid.totalRows,
+      totalColumns: Math.ceil(this.renderer.canvasWidth / this.config.enemies.grid.cellSize),
+      cellSize: this.config.enemies.grid.cellSize,
+    });
+
     this.renderables = [
       // Bullets
       this.bulletsManager,
       // Enemies
       this.enemiesManager,
+      this.enemiesGrid,
       // Player
       this.player,
     ];
@@ -112,16 +135,56 @@ export class Game {
   }
 
   public restart() {
-    // this.player = new Player(this);
-    // this.enemiesPool.reset();
-    // this.bulletsPool.reset();
-
-    // this.statistic.score = 0;
-
-    // this.updateScoreUI();
-    // this.updateLivesUI();
-    // this.updateBulletsUI();
-
     this.isInProgress = true;
+  }
+
+  private spawnEnemy() {
+    const cell = this.getRandomEnemiesGridCell();
+    const enemy = this.getRandomEnemy();
+
+    if (!enemy || !cell) {
+      return;
+    }
+
+    enemy.pushInGame(cell.x, cell.y - enemy.height, this.enemiesCounter.getValue());
+
+    const isOutOfTheGrid = enemy.x < this.enemiesGrid.x || enemy.x + enemy.width > this.enemiesGrid.width;
+    if (isOutOfTheGrid) {
+      enemy.pullFromGame();
+    }
+
+    this.enemiesManager.forEachInGame((poolEnemy) => {
+      if (!enemy || poolEnemy.id === enemy.id) return;
+
+      const isInTheSameCell = enemy.x === poolEnemy.x;
+      const isCollidesWithLowerOne = enemy.y + enemy.height + 35 >= poolEnemy.y;
+
+      if (isInTheSameCell && isCollidesWithLowerOne) {
+        enemy.pullFromGame();
+      }
+    });
+  }
+
+  private getRandomEnemiesGridCell() {
+    const randomIndex = Math.round(Math.random() * this.enemiesGrid.cells.length);
+    const lastCellIndex = this.enemiesGrid.cells.length - 1;
+
+    const index = randomIndex > lastCellIndex ? lastCellIndex : randomIndex;
+    return this.enemiesGrid.cells[index];
+  }
+
+  private getRandomEnemy() {
+    const random = Math.random() * 100;
+    let enemy = this.enemiesManager.getEnemy("light");
+
+    if (random < 10) {
+      enemy = this.enemiesManager.getEnemy("heavy");
+    } else if (random < 40) {
+      enemy = this.enemiesManager.getEnemy("medium");
+    } else if (random < 50) {
+      enemy = this.enemiesManager.getEnemy("regular");
+    }
+
+    return enemy;
   }
 }
