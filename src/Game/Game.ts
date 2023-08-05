@@ -3,6 +3,7 @@ import { Player } from "./entities";
 import { BulletsManager } from "./entities/bullets";
 import { EnemiesManager } from "./entities/enemies";
 import { AssetsRepository, AssetToLoad } from "./modules/AssetsRepository";
+import { Grid } from "./modules/Grid";
 import { Keyboard } from "./modules/Keyboard";
 import { KeyboardKeyCode } from "./modules/Keyboard/enums";
 import { Renderer } from "./modules/Renderer/Renderer";
@@ -17,7 +18,7 @@ export class Game {
 
   public bulletsManager!: BulletsManager;
   public enemiesManager!: EnemiesManager;
-
+  public enemiesGrid!: Grid;
   private renderables: Renderable[] = [];
 
   private isInProgress = false;
@@ -32,11 +33,18 @@ export class Game {
 
   public start() {
     console.log("Start!!!");
+    setInterval(() => {
+      console.log("enemy tick");
 
-    this.enemiesManager.getEnemy("light")?.pushInGame(0, 0);
-    this.enemiesManager.getEnemy("regular")?.pushInGame(200, 0);
-    this.enemiesManager.getEnemy("medium")?.pushInGame(400, 0);
-    this.enemiesManager.getEnemy("heavy")?.pushInGame(600, 0);
+      if (this.isInProgress) {
+        this.spawnEnemy();
+      }
+    }, 1000);
+
+    // this.enemiesManager.getEnemy("light")?.pushInGame(0, 0);
+    // this.enemiesManager.getEnemy("regular")?.pushInGame(200, 0);
+    // this.enemiesManager.getEnemy("medium")?.pushInGame(400, 0);
+    // this.enemiesManager.getEnemy("heavy")?.pushInGame(600, 0);
 
     this.isInProgress = true;
     this.renderGameFrame(0);
@@ -47,11 +55,20 @@ export class Game {
     this.bulletsManager = new BulletsManager(this);
     this.enemiesManager = new EnemiesManager(this);
 
+    const cellSize = 120;
+    this.enemiesGrid = new Grid({
+      game: this,
+      totalRows: 1,
+      totalColumns: Math.ceil(this.renderer.canvasWidth / cellSize),
+      cellSize,
+    });
+
     this.renderables = [
       // Bullets
       this.bulletsManager,
       // Enemies
       this.enemiesManager,
+      this.enemiesGrid,
       // Player
       this.player,
     ];
@@ -123,5 +140,45 @@ export class Game {
     // this.updateBulletsUI();
 
     this.isInProgress = true;
+  }
+
+  private spawnEnemy() {
+    const randomIndex = Math.round(Math.random() * this.enemiesGrid.cells.length);
+
+    const index = randomIndex > this.enemiesGrid.cells.length - 1 ? this.enemiesGrid.cells.length - 1 : randomIndex;
+    const cell = this.enemiesGrid.cells[index];
+
+    const random = Math.random() * 100;
+    let enemy = this.enemiesManager.getEnemy("light");
+
+    if (random < 10) {
+      enemy = this.enemiesManager.getEnemy("heavy");
+    } else if (random < 40) {
+      enemy = this.enemiesManager.getEnemy("medium");
+    } else if (random < 50) {
+      enemy = this.enemiesManager.getEnemy("regular");
+    }
+
+    if (!enemy || !cell) {
+      return;
+    }
+
+    enemy.pushInGame(cell.x, cell.y - enemy.height);
+
+    if (enemy.x < this.enemiesGrid.x || enemy.x + enemy.width > this.enemiesGrid.width) {
+      enemy.pullFromGame();
+    }
+
+    this.enemiesManager.forEachInGame((poolEnemy) => {
+      if (!enemy) return;
+
+      if (poolEnemy.id === enemy.id) {
+        return;
+      }
+
+      if (enemy.x === poolEnemy.x && enemy.y + enemy.height >= poolEnemy.y) {
+        enemy.pullFromGame();
+      }
+    });
   }
 }

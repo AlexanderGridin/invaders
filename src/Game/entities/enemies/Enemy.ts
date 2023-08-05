@@ -3,7 +3,7 @@ import { checkRectanglesSimpleCollision } from "Game/core/collision-detection";
 import { Game } from "Game/Game";
 import { ImgAsset } from "Game/modules/AssetsRepository";
 import { ObjectsPoolEntity } from "Game/modules/ObjectsPool/ObjectsPoolEntity";
-import { defineScale } from "Game/utils";
+import { defineScale, generateId } from "Game/utils";
 import { Bullet } from "../bullets/Bullet";
 import { HealthBar } from "../HealthBar";
 
@@ -14,6 +14,7 @@ interface EnemyConfig {
 }
 
 export class Enemy extends ObjectsPoolEntity {
+  public id = generateId();
   public lives = 0;
   public speed = 0;
 
@@ -25,6 +26,7 @@ export class Enemy extends ObjectsPoolEntity {
   private slowDownTime = 0;
 
   private initialSpeed = 0;
+  private initialLives = 0;
 
   constructor({ game, lives, speed }: EnemyConfig) {
     super({
@@ -32,6 +34,8 @@ export class Enemy extends ObjectsPoolEntity {
     });
 
     this.lives = lives;
+    this.initialLives = lives;
+
     this.initialSpeed = speed;
     this.speed = this.initialSpeed;
 
@@ -123,5 +127,18 @@ export class Enemy extends ObjectsPoolEntity {
     if (this.game.isDebug) {
       this.game.renderer.strokeRect({ obj: this });
     }
+  }
+
+  public pullFromGame() {
+    super.pullFromGame();
+
+    this.lives = this.initialLives;
+    this.speed = this.initialSpeed;
+
+    this.slowDownTime = 0;
+    this.isSlowDown = false;
+
+    this.x = 0;
+    this.y = 0;
   }
 }
