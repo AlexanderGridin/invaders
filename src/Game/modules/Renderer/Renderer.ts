@@ -58,6 +58,11 @@ export class Renderer {
     this.ctx.restore();
   }
 
+  public fillText({ text, x, y, color = "#000" }: { text: string; x: number; y: number; color?: string }) {
+    this.ctx.fillStyle = color;
+    this.ctx.fillText(text, x, y);
+  }
+
   public get canvasWidth(): number {
     return this.ctx.canvas.width;
   }

@@ -79,4 +79,24 @@ export class EnemiesManager {
     this.mediumPool.forEachInGame(cb);
     this.heavyPool.forEachInGame(cb);
   }
+
+  public findInGame(cb: (enemy: Enemy) => boolean): Enemy | undefined {
+    const enemies = [
+      ...this.lightPool.pool,
+      ...this.regularPool.pool,
+      ...this.mediumPool.pool,
+      ...this.heavyPool.pool,
+    ] as Enemy[];
+
+    return enemies.find((enemy) => enemy.isInGame && cb(enemy));
+  }
+
+  public getAll(): Enemy[] {
+    return [
+      ...this.lightPool.pool,
+      ...this.regularPool.pool,
+      ...this.mediumPool.pool,
+      ...this.heavyPool.pool,
+    ] as Enemy[];
+  }
 }

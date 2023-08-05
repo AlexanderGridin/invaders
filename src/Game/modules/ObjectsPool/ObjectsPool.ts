@@ -76,12 +76,14 @@ export class ObjectsPool<T extends ObjectsPoolEntity> {
   }
 
   public forEachInGame(onInGameObject: (obj: T) => void) {
-    this.pool.forEach((obj) => {
-      if (!obj.isInGame) {
-        return;
-      }
+    const poolSize = this.pool.length;
 
-      onInGameObject(obj as T);
-    });
+    for (let i = 0; i < poolSize; i++) {
+      const obj = this.pool[i];
+
+      if (obj.isInGame) {
+        onInGameObject(obj as T);
+      }
+    }
   }
 }

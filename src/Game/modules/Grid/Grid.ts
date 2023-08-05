@@ -1,4 +1,4 @@
-import { Renderable } from "Game/core";
+import { GameObject, Renderable } from "Game/core";
 import { Game } from "Game/Game";
 import { GridCell } from "./GridCell";
 
@@ -9,37 +9,36 @@ interface GridConfig {
   cellSize: number;
 }
 
-export class Grid implements Renderable {
-  public x = 0;
-  public y = 0;
-
-  public width = 0;
-  public height = 0;
-
+export class Grid extends GameObject implements Renderable {
   public cells: GridCell[] = [];
 
   private game: Game;
   private config: Omit<GridConfig, "game">;
-  private posCorrection = 0;
+  private positionOffset = 0;
 
   constructor({ game, ...config }: GridConfig) {
+    super({
+      width: config.totalColumns * config.cellSize,
+      height: config.totalRows * config.cellSize,
+    });
+
     this.game = game;
     this.config = config;
 
-    this.width = this.config.totalColumns * this.config.cellSize;
-    this.height = this.config.totalRows * this.config.cellSize;
+    this.positionOffset = (this.width - this.game.renderer.canvasWidth) / 2;
 
-    this.posCorrection = (this.width - this.game.renderer.canvasWidth) / 2;
-
-    if (this.posCorrection > 0) {
-      this.config.totalColumns = this.config.totalColumns - 1;
-      this.width = this.config.totalColumns * this.config.cellSize;
+    if (this.positionOffset > 0) {
+      this.correctGrid();
     }
 
-    this.posCorrection = (this.width - this.game.renderer.canvasWidth) / 2;
-    this.x = 0 - this.posCorrection;
-
     this.initCells();
+  }
+
+  private correctGrid() {
+    this.config.totalColumns = this.config.totalColumns - 1;
+    this.width = this.config.totalColumns * this.config.cellSize;
+    this.positionOffset = (this.width - this.game.renderer.canvasWidth) / 2;
+    this.x = 0 - this.positionOffset;
   }
 
   public initCells() {

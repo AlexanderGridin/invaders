@@ -1,3 +1,4 @@
+import { GameObject } from "Game/core";
 import { Game } from "Game/Game";
 
 interface GridCellConfig {
@@ -10,35 +11,26 @@ interface GridCellConfig {
   columnIndex: number;
 }
 
-export class GridCell {
-  public x: number;
-  public y: number;
-
-  public width: number;
-  public height: number;
-
+export class GridCell extends GameObject {
   private game: Game;
 
   public rowIndex: number;
   public columnIndex: number;
 
   constructor({ game, x, y, width, height, rowIndex, columnIndex }: GridCellConfig) {
+    super({ x, y, width, height });
+
     this.game = game;
-
-    this.x = x;
-    this.y = y;
-
-    this.width = width;
-    this.height = height;
 
     this.rowIndex = rowIndex;
     this.columnIndex = columnIndex;
   }
 
   render() {
+    if (!this.game.isDebug) return;
+
     this.game.renderer.strokeRect({
-      // TODO: solve ANY
-      obj: this as any,
+      obj: this,
       color: "#BF616A",
     });
   }
