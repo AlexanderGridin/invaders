@@ -1,3 +1,4 @@
+import { config } from "./config";
 import { Renderable } from "./core";
 import { Player } from "./entities";
 import { BulletsManager } from "./entities/bullets";
@@ -10,15 +11,7 @@ import { KeyboardKeyCode } from "./modules/Keyboard/enums";
 import { Renderer } from "./modules/Renderer/Renderer";
 
 export class Game {
-  public config = {
-    enemies: {
-      grid: {
-        cellSize: 120,
-        totalRows: 1,
-      },
-      spawnEachMs: 500,
-    },
-  };
+  public config = config;
 
   public renderer: Renderer;
   public assetsRepo = new AssetsRepository();
@@ -38,6 +31,7 @@ export class Game {
 
   private prevFrameTime = 0;
   public deltaTime = 0;
+  private enemiesSpawnTime = 0;
 
   constructor(canvas: HTMLCanvasElement | null) {
     this.renderer = new Renderer(canvas);
@@ -45,13 +39,6 @@ export class Game {
 
   public start() {
     console.log("Start!!!");
-    setInterval(() => {
-      console.log("enemy tick");
-
-      if (this.isInProgress) {
-        this.spawnEnemy();
-      }
-    }, this.config.enemies.spawnEachMs);
 
     this.isInProgress = true;
     this.renderGameFrame(0);
@@ -115,27 +102,21 @@ export class Game {
   }
 
   private update() {
+    this.handleSelfUpdate();
     this.player.update();
     this.bulletsManager.update();
     this.enemiesManager.update();
   }
 
-  private render() {
-    this.renderables.forEach((renderable) => {
-      renderable.render();
-    });
-  }
+  private handleSelfUpdate() {
+    this.enemiesSpawnTime += this.deltaTime;
 
-  public stop() {
-    this.isInProgress = false;
-  }
+    if (this.enemiesSpawnTime > this.config.enemies.spawnEachMs) {
+      console.log("spawnEnemy");
 
-  public resume() {
-    this.isInProgress = true;
-  }
-
-  public restart() {
-    this.isInProgress = true;
+      this.spawnEnemy();
+      this.enemiesSpawnTime = 0;
+    }
   }
 
   private spawnEnemy() {
@@ -186,5 +167,23 @@ export class Game {
     }
 
     return enemy;
+  }
+
+  private render() {
+    this.renderables.forEach((renderable) => {
+      renderable.render();
+    });
+  }
+
+  public stop() {
+    this.isInProgress = false;
+  }
+
+  public resume() {
+    this.isInProgress = true;
+  }
+
+  public restart() {
+    this.isInProgress = true;
   }
 }
