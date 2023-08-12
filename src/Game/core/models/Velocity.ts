@@ -33,6 +33,10 @@ export class Velocity {
     this._x = toInt(amount);
   }
 
+  public setY(amount: number) {
+    this._y = toInt(amount);
+  }
+
   public increase(amount: number) {
     this._x += toInt(amount);
     this._y += toInt(amount);

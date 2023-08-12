@@ -1,6 +1,6 @@
 import { Render, Update } from "Game/core/interfaces";
 import { Game } from "Game/Game";
-import { ObjectsPoolNEW } from "Game/modules/ObjectsPool";
+import { ObjectsPool } from "Game/modules/ObjectsPool";
 import { Bullet } from "./Bullet";
 import { HeavyBullet } from "./HeavyBullet";
 import { LightBullet } from "./LightBullet";
@@ -9,22 +9,22 @@ import { MediumBullet } from "./MediumBullet";
 type BulletType = "light" | "medium" | "heavy";
 
 export class BulletsManager implements Render, Update {
-  private lightBulletsPool!: ObjectsPoolNEW<LightBullet>;
-  private mediumBulletsPool!: ObjectsPoolNEW<MediumBullet>;
-  private heavyBulletsPool!: ObjectsPoolNEW<HeavyBullet>;
+  private lightBulletsPool!: ObjectsPool<LightBullet>;
+  private mediumBulletsPool!: ObjectsPool<MediumBullet>;
+  private heavyBulletsPool!: ObjectsPool<HeavyBullet>;
 
   constructor(game: Game) {
-    this.lightBulletsPool = new ObjectsPoolNEW<LightBullet>({
+    this.lightBulletsPool = new ObjectsPool<LightBullet>({
       game,
       maxItems: 30,
       entityClass: LightBullet,
     });
-    this.mediumBulletsPool = new ObjectsPoolNEW<MediumBullet>({
+    this.mediumBulletsPool = new ObjectsPool<MediumBullet>({
       game,
       maxItems: 10,
       entityClass: MediumBullet,
     });
-    this.heavyBulletsPool = new ObjectsPoolNEW<HeavyBullet>({
+    this.heavyBulletsPool = new ObjectsPool<HeavyBullet>({
       game,
       maxItems: 10,
       entityClass: HeavyBullet,

@@ -1,3 +1,4 @@
+import { Velocity } from "Game/core/models/Velocity";
 import { Game } from "Game/Game";
 import { Enemy } from "./Enemy";
 
@@ -6,10 +7,8 @@ export class RegularEnemy extends Enemy {
     super({
       game,
       lives: 10,
-      speed: 1.5,
+      velocity: new Velocity(0, 1.5),
+      assetName: "tr",
     });
-
-    this.initAsset("tr");
-    this.initSize();
   }
 }

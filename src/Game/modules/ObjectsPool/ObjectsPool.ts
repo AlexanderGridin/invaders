@@ -1,31 +1,32 @@
+import { Render, Update } from "Game/core/interfaces";
 import { Game } from "Game/Game";
-import { ObjectsPoolEntity } from "./ObjectsPoolEntity";
+import { ObjectsPoolItem } from "./ObjectsPoolItem";
 
 interface ObjectsPoolConfig {
   game: Game;
-  limit: number;
-  entityClass: { new (game: Game): ObjectsPoolEntity };
+  maxItems: number;
+  entityClass: { new (game: Game): ObjectsPoolItem };
 }
 
-export class ObjectsPool<T extends ObjectsPoolEntity> {
+export class ObjectsPool<T extends ObjectsPoolItem> implements Update, Render {
+  public pool: ObjectsPoolItem[] = [];
+
   private game: Game;
-  private limit = 0;
+  private maxItems = 0;
   private entityClass: {
-    new (game: Game): ObjectsPoolEntity;
+    new (game: Game): ObjectsPoolItem;
   };
 
-  public pool: ObjectsPoolEntity[] = [];
-
-  constructor({ game, limit, entityClass }: ObjectsPoolConfig) {
+  constructor({ game, maxItems, entityClass }: ObjectsPoolConfig) {
     this.game = game;
-    this.limit = limit;
+    this.maxItems = maxItems;
     this.entityClass = entityClass;
 
     this.init();
   }
 
   private init() {
-    for (let i = 0; i < this.limit; i++) {
+    for (let i = 0; i < this.maxItems; i++) {
       this.pool.push(new this.entityClass(this.game));
     }
   }
@@ -33,57 +34,40 @@ export class ObjectsPool<T extends ObjectsPoolEntity> {
   public getObject(): T | null {
     let obj: T | null = null;
 
-    this.pool.some((item) => {
-      if (!item.isInGame) {
-        obj = item as T;
-        return true;
-      }
-
-      return false;
-    });
+    for (let item of this.pool) {
+      if (item.isInGame) continue;
+      obj = item as T;
+      break;
+    }
 
     return obj;
   }
 
   public update() {
-    this.pool.forEach((obj) => {
-      if (!obj.isInGame) {
-        return;
-      }
-
+    for (let obj of this.pool) {
+      if (!obj.isInGame) continue;
       obj.update();
-    });
+    }
   }
 
   public render() {
-    this.pool.forEach((obj) => {
-      if (!obj.isInGame) {
-        return;
-      }
-
+    for (let obj of this.pool) {
+      if (!obj.isInGame) continue;
       obj.render();
-    });
+    }
   }
 
   public reset() {
-    this.pool.forEach((obj) => {
-      if (!obj.isInGame) {
-        return;
-      }
-
+    for (let obj of this.pool) {
+      if (!obj.isInGame) continue;
       obj.pullFromGame();
-    });
+    }
   }
 
   public forEachInGame(onInGameObject: (obj: T) => void) {
-    const poolSize = this.pool.length;
-
-    for (let i = 0; i < poolSize; i++) {
-      const obj = this.pool[i];
-
-      if (obj.isInGame) {
-        onInGameObject(obj as T);
-      }
+    for (let obj of this.pool) {
+      if (!obj.isInGame) continue;
+      onInGameObject(obj as T);
     }
   }
 }

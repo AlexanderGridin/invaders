@@ -41,18 +41,18 @@ export const assetsToLoad: AssetToLoad[] = [
   },
   {
     name: "tl",
-    src: "/assets/TL2.png",
+    src: "/assets/TL2_size.png",
   },
   {
     name: "tr",
-    src: "/assets/TR2.png",
+    src: "/assets/TR2_size.png",
   },
   {
     name: "tm",
-    src: "/assets/TM2.png",
+    src: "/assets/TM2_size.png",
   },
   {
     name: "th",
-    src: "/assets/TH2.png",
+    src: "/assets/TH2_size.png",
   },
 ];

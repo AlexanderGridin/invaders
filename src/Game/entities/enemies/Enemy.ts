@@ -1,64 +1,61 @@
 import { AssetName } from "App/components/GameCanvas/assetsToLoad";
 import { checkRectanglesSimpleCollision } from "Game/core/collision-detection";
+import { Position, Size } from "Game/core/models";
+import { Velocity } from "Game/core/models/Velocity";
 import { Game } from "Game/Game";
 import { ImgAsset } from "Game/modules/AssetsRepository";
-import { ObjectsPoolEntity } from "Game/modules/ObjectsPool/ObjectsPoolEntity";
-import { defineScale, generateId } from "Game/utils";
+import { ObjectsPoolItem } from "Game/modules/ObjectsPool";
+import { generateId } from "Game/utils";
 import { Bullet } from "../bullets/Bullet";
-import { HealthBar } from "../HealthBar";
+// import { HealthBar } from "../HealthBar";
 
 interface EnemyConfig {
   game: Game;
   lives: number;
-  speed: number;
+  velocity: Velocity;
+  assetName: AssetName;
 }
 
-export class Enemy extends ObjectsPoolEntity {
+export class Enemy extends ObjectsPoolItem {
   public id = generateId();
   public lives = 0;
-  public speed = 0;
   public inGameNumber: number | null = null;
 
   private asset!: ImgAsset;
 
-  private healthBar!: HealthBar;
+  // private healthBar!: HealthBar;
 
   private isSlowDown = false;
   private slowDownTime = 0;
 
-  private initialSpeed = 0;
   private initialLives = 0;
 
-  constructor({ game, lives, speed }: EnemyConfig) {
-    super({
-      game,
-    });
+  constructor({ game, lives, velocity, assetName }: EnemyConfig) {
+    super(game);
 
     this.lives = lives;
     this.initialLives = lives;
 
-    this.initialSpeed = speed;
-    this.speed = this.initialSpeed;
+    this.velocity = velocity;
 
-    this.healthBar = new HealthBar({
-      game,
-      entity: this,
-      offsetXMultip: 0.3,
-      offsetYMultip: 0.03,
-      color: "red",
-    });
+    const { width, height } = game.config.enemies;
+    this.size = new Size(width, height);
+
+    this.initAsset(assetName);
+
+    // this.healthBar = new HealthBar({
+    //   game,
+    //   entity: this,
+    //   offsetXMultip: 0.3,
+    //   offsetYMultip: 0.03,
+    //   color: "red",
+    // });
   }
 
-  public initAsset(assetName: AssetName) {
+  private initAsset(assetName: AssetName) {
     const asset = this.game.assetsRepo.getAsset<AssetName, ImgAsset>(assetName);
     if (!asset) return;
     this.asset = asset;
-  }
-
-  public initSize() {
-    this.scale = defineScale(120, this.asset.width);
-    this.width = this.asset.width * this.scale;
-    this.height = this.asset.height * this.scale;
   }
 
   public update() {
@@ -66,50 +63,53 @@ export class Enemy extends ObjectsPoolEntity {
 
     this.moveDown();
 
-    // const isHitPlayer =
-    //   this.y >= this.game.renderer.canvasHeight - this.height ||
-    //   checkRectanglesSimpleCollision({ a: this, b: this.game.playerOLD });
+    const isHitPlayer =
+      this.position.y >= this.game.renderer.canvasHeight - this.size.height ||
+      checkRectanglesSimpleCollision({ a: this, b: this.game.player.base });
 
-    // if (isHitPlayer) {
-    //   this.game.playerOLD.takeDamage();
-    //   this.pullFromGame();
-    // }
+    if (isHitPlayer) {
+      console.log("hit player");
+      // this.game.player.takeDamage();
+      this.pullFromGame();
+    }
 
     this.game.bulletsManager.forEachInGame(this.handleBulletCollision.bind(this));
 
     this.handleSlowDown();
     this.handleEnemyCollision();
 
-    this.healthBar.update();
+    // this.healthBar.update();
   }
 
   private moveDown() {
-    this.y += this.speed;
+    this.position.increaseY(this.velocity.y);
   }
 
   private handleEnemyCollision() {
     const enemies = this.game.enemiesManager.getAll();
 
-    for (let i = 0; i < enemies.length; i++) {
-      const poolEnemy = enemies[i];
-
+    for (let poolEnemy of enemies) {
       const hasLowerPosition = (this.inGameNumber ?? 0) < (poolEnemy.inGameNumber ?? 0);
-      const isInSameCell = this.x === poolEnemy.x;
+      const isInSameCell = this.position.x === poolEnemy.position.x;
       const isSelf = poolEnemy.id === this.id;
 
       if (isSelf || !isInSameCell || !poolEnemy.isInGame || hasLowerPosition) {
         if (!this.isSlowDown) {
-          this.speed = this.initialSpeed;
+          this.velocity.reset();
         }
 
         continue;
       }
 
-      const isFasterThanLower = poolEnemy.speed <= this.speed;
-      const willHaveCollisionWithLower = checkRectanglesSimpleCollision({ a: this, b: poolEnemy, speedY: 35 });
+      const isFasterThanLower = poolEnemy.velocity.y <= this.velocity.y;
+      const willHaveCollisionWithLower = checkRectanglesSimpleCollision({
+        a: this,
+        b: poolEnemy,
+        velocity: new Velocity(0, 35),
+      });
 
       if (isFasterThanLower && willHaveCollisionWithLower) {
-        this.speed = poolEnemy.speed;
+        this.velocity.setY(poolEnemy.velocity.y);
         break;
       }
     }
@@ -123,25 +123,25 @@ export class Enemy extends ObjectsPoolEntity {
     if (this.slowDownTime < 1000) return;
 
     this.isSlowDown = false;
-    this.speed = this.initialSpeed;
+    this.velocity.reset();
     this.slowDownTime = 0;
   }
 
   private handleBulletCollision(bullet: Bullet) {
-    // const hasCollision = checkRectanglesSimpleCollision({ a: this, b: bullet });
-    // if (!hasCollision) return;
-    // this.takeDamage(bullet.damage);
-    // this.slowDown();
-    // bullet.pullFromGame();
-    // if (this.lives > 0) return;
-    // this.pullFromGame();
+    const hasCollision = checkRectanglesSimpleCollision({ a: this, b: bullet });
+    if (!hasCollision) return;
+    this.takeDamage(bullet.damage);
+    this.slowDown();
+    bullet.pullFromGame();
+    if (this.lives > 0) return;
+    this.pullFromGame();
   }
 
   private slowDown() {
     if (this.isSlowDown) return;
 
     this.isSlowDown = true;
-    this.speed *= 0.5;
+    this.velocity.setY(this.velocity.y * 0.5);
   }
 
   private takeDamage(amount = 1) {
@@ -151,34 +151,31 @@ export class Enemy extends ObjectsPoolEntity {
   public render() {
     if (!this.isInGame) return;
 
-    this.game.renderer.drawImage({
-      asset: this.asset,
-      obj: this,
-    });
+    this.game.renderer.drawImageNew({ img: this.asset, position: this.position, size: this.size });
 
-    this.healthBar.render();
+    // this.healthBar.render();
 
     if (this.game.isDebug) {
-      this.game.renderer.strokeRect({ obj: this, color: "cyan" });
+      this.game.renderer.strokeRectNew({ obj: this, color: "cyan" });
       this.renderDebugText();
     }
   }
 
   private renderDebugText() {
-    const text = `Speed: ${this.speed} In-game number: ${this.inGameNumber}
+    const text = `Speed: ${this.velocity.y} In-game number: ${this.inGameNumber}
 		`;
     this.game.renderer.fillText({
       text,
-      x: this.x,
-      y: this.y,
+      x: this.position.x,
+      y: this.position.y,
       color: "violet",
     });
 
-    const posText = `X: ${this.x.toFixed(2)} Y: ${this.y.toFixed(2)}`;
+    const posText = `X: ${this.position.x} Y: ${this.position.y}`;
     this.game.renderer.fillText({
       text: posText,
-      x: this.x,
-      y: this.y - 15,
+      x: this.position.x,
+      y: this.position.y - 15,
       color: "violet",
     });
   }
@@ -187,19 +184,19 @@ export class Enemy extends ObjectsPoolEntity {
     super.pullFromGame();
 
     this.lives = this.initialLives;
-    this.speed = this.initialSpeed;
+    this.velocity.reset();
 
     this.slowDownTime = 0;
     this.isSlowDown = false;
 
-    this.x = 0;
-    this.y = 0;
+    this.position.setX(0);
+    this.position.setY(0);
 
     this.inGameNumber = null;
   }
 
-  public pushInGame(x: number, y: number, orderInCell?: number) {
-    super.pushInGame(x, y);
+  public pushInGame(position: Position, orderInCell?: number) {
+    super.pushInGame(position);
     this.inGameNumber = orderInCell ?? null;
   }
 }

@@ -1,19 +1,19 @@
+import { Position, Size } from "../models";
+import { Velocity } from "../models/Velocity";
+
 interface Collidable {
-  x: number;
-  y: number;
-  width: number;
-  height: number;
+  position: Position;
+  size: Size;
 }
 
 interface Config {
   a: Collidable;
   b: Collidable;
-  speedX?: number;
-  speedY?: number;
+  velocity?: Velocity;
 }
 
-export const checkRectanglesSimpleCollision = ({ a, b, speedX = 0, speedY = 0 }: Config): boolean =>
-  a.x - speedX < b.x + b.width &&
-  a.x + a.width + speedX > b.x &&
-  a.y - speedY < b.y + b.height &&
-  a.y + a.height + speedY > b.y;
+export const checkRectanglesSimpleCollision = ({ a, b, velocity = new Velocity() }: Config): boolean =>
+  a.position.x - velocity.x < b.position.x + b.size.width &&
+  a.position.x + a.size.width + velocity.x > b.position.x &&
+  a.position.y - velocity.y < b.position.y + b.size.height &&
+  a.position.y + a.size.height + velocity.y > b.position.y;

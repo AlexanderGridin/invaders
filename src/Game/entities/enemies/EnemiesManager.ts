@@ -1,3 +1,4 @@
+import { Render, Update } from "Game/core/interfaces";
 import { Game } from "Game/Game";
 import { ObjectsPool } from "Game/modules/ObjectsPool";
 import { Enemy } from "./Enemy";
@@ -8,7 +9,7 @@ import { RegularEnemy } from "./RegularEnemy";
 
 type EnemyType = "light" | "regular" | "medium" | "heavy";
 
-export class EnemiesManager {
+export class EnemiesManager implements Update, Render {
   private lightPool!: ObjectsPool<LightEnemy>;
   private regularPool!: ObjectsPool<RegularEnemy>;
   private mediumPool!: ObjectsPool<MediumEnemy>;
@@ -17,25 +18,25 @@ export class EnemiesManager {
   constructor(game: Game) {
     this.lightPool = new ObjectsPool<LightEnemy>({
       game,
-      limit: 20,
+      maxItems: 20,
       entityClass: LightEnemy,
     });
 
     this.regularPool = new ObjectsPool<RegularEnemy>({
       game,
-      limit: 20,
+      maxItems: 20,
       entityClass: RegularEnemy,
     });
 
     this.mediumPool = new ObjectsPool<MediumEnemy>({
       game,
-      limit: 20,
+      maxItems: 20,
       entityClass: MediumEnemy,
     });
 
     this.heavyPool = new ObjectsPool<HeavyEnemy>({
       game,
-      limit: 20,
+      maxItems: 20,
       entityClass: HeavyEnemy,
     });
   }

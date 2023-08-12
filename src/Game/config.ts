@@ -18,6 +18,8 @@ export const config = {
       totalRows: 1,
     },
     spawnEachMs: 1000,
+    width: 120,
+    height: 199,
   },
   bullets: {
     light: {

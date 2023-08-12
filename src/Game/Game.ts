@@ -1,7 +1,6 @@
 import { config } from "./config";
-import { Renderable } from "./core";
-import { GameObject } from "./core/models";
-import { MovableGameObject } from "./core/models/MovableGameObject";
+import { Render, Update } from "./core/interfaces";
+import { Position } from "./core/models";
 import { BulletsManager } from "./entities/bullets";
 import { EnemiesManager } from "./entities/enemies";
 import { Player } from "./entities/Player";
@@ -26,8 +25,7 @@ export class Game {
   public enemiesManager!: EnemiesManager;
   private enemiesCounter = new Counter();
   public enemiesGrid!: Grid;
-  private renderables: Renderable[] = [];
-  private gameObjects: (GameObject | MovableGameObject)[] = [];
+  private gameObjects: (Render | Update)[] = [];
 
   private isInProgress = false;
   public isDebug = false;
@@ -60,14 +58,7 @@ export class Game {
       cellSize: this.config.enemies.grid.cellSize,
     });
 
-    this.gameObjects = [this.player];
-    this.renderables = [
-      // Bullets
-      this.bulletsManager,
-      // Enemies
-      // this.enemiesManager,
-      this.enemiesGrid,
-    ];
+    this.gameObjects = [this.bulletsManager, this.enemiesGrid, this.enemiesManager, this.player];
   }
 
   private renderGameFrame(frameTime: number) {
@@ -108,13 +99,10 @@ export class Game {
     this.handleSelfUpdate();
 
     for (let obj of this.gameObjects) {
-      if ("update" in obj && typeof obj["update"] === "function") {
+      if ("update" in obj) {
         obj.update();
       }
     }
-
-    this.bulletsManager.update();
-    // this.enemiesManager.update();
   }
 
   private handleSelfUpdate() {
@@ -136,9 +124,11 @@ export class Game {
       return;
     }
 
-    enemy.pushInGame(cell.x, cell.y - enemy.height, this.enemiesCounter.getValue());
+    const position = new Position(cell.x, cell.y - enemy.size.height);
+    enemy.pushInGame(position, this.enemiesCounter.getValue());
 
-    const isOutOfTheGrid = enemy.x < this.enemiesGrid.x || enemy.x + enemy.width > this.enemiesGrid.width;
+    const isOutOfTheGrid =
+      enemy.position.x < this.enemiesGrid.x || enemy.position.x + enemy.size.width > this.enemiesGrid.width;
     if (isOutOfTheGrid) {
       enemy.pullFromGame();
     }
@@ -146,8 +136,8 @@ export class Game {
     this.enemiesManager.forEachInGame((poolEnemy) => {
       if (!enemy || poolEnemy.id === enemy.id) return;
 
-      const isInTheSameCell = enemy.x === poolEnemy.x;
-      const isCollidesWithLowerOne = enemy.y + enemy.height + 35 >= poolEnemy.y;
+      const isInTheSameCell = enemy.position.x === poolEnemy.position.x;
+      const isCollidesWithLowerOne = enemy.position.y + enemy.size.height + 35 >= poolEnemy.position.y;
 
       if (isInTheSameCell && isCollidesWithLowerOne) {
         enemy.pullFromGame();
@@ -156,12 +146,8 @@ export class Game {
   }
 
   private render() {
-    this.renderables.forEach((renderable) => {
-      renderable.render();
-    });
-
     for (let obj of this.gameObjects) {
-      if ("render" in obj && typeof obj["render"] === "function") {
+      if ("render" in obj) {
         obj.render();
       }
     }
