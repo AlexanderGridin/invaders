@@ -1,14 +1,12 @@
+import { Size } from "Game/core/models";
 import { Game } from "Game/Game";
 import { Bullet } from "./Bullet";
 
 export class LightBullet extends Bullet {
-  public damage = 1;
-  protected maxWidth = 7;
-
   constructor(game: Game) {
-    super(game);
+    super({ game, damage: 1, assetName: "light-bullet" });
 
-    this.initAsset("light-bullet");
-    this.initSize();
+    const { width, height } = game.config.bullets.light;
+    this.size = new Size(width, height);
   }
 }

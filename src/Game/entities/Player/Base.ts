@@ -1,10 +1,11 @@
 import { AssetName } from "App/components/GameCanvas/assetsToLoad";
+import { Render, Update } from "Game/core/interfaces";
 import { GameObject, Size } from "Game/core/models";
 import { Game } from "Game/Game";
 import { ImgAsset } from "Game/modules/AssetsRepository";
 import { Player } from "./Player";
 
-export class Base extends GameObject {
+export class Base extends GameObject implements Update, Render {
   private game: Game;
   private player: Player;
   public asset: ImgAsset;

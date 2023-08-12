@@ -19,4 +19,18 @@ export const config = {
     },
     spawnEachMs: 1000,
   },
+  bullets: {
+    light: {
+      width: 7,
+      height: 17,
+    },
+    medium: {
+      width: 12,
+      height: 28,
+    },
+    heavy: {
+      width: 15,
+      height: 47,
+    },
+  },
 };

@@ -1,14 +1,12 @@
+import { Size } from "Game/core/models";
 import { Game } from "Game/Game";
 import { Bullet } from "./Bullet";
 
 export class HeavyBullet extends Bullet {
-  protected maxWidth = 15;
-  public damage = 10;
-
   constructor(game: Game) {
-    super(game);
+    super({ game, damage: 10, assetName: "heavy-bullet" });
 
-    this.initAsset("heavy-bullet");
-    this.initSize();
+    const { width, height } = game.config.bullets.heavy;
+    this.size = new Size(width, height);
   }
 }

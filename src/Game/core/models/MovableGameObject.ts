@@ -20,6 +20,4 @@ export abstract class MovableGameObject extends GameObject {
     super();
     this.velocity = new Velocity();
   }
-
-  public abstract update(): void;
 }

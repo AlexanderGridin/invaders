@@ -1,3 +1,4 @@
+import { Render, Update } from "Game/core/interfaces";
 import { Position } from "Game/core/models";
 import { MovableGameObject } from "Game/core/models/MovableGameObject";
 import { Velocity } from "Game/core/models/Velocity";
@@ -7,7 +8,7 @@ import { KeyboardKeyCode } from "Game/modules/Keyboard/enums";
 import { Base } from "./Base";
 import { Gun } from "./Gun";
 
-export class Player extends MovableGameObject {
+export class Player extends MovableGameObject implements Update, Render {
   public base: Base;
   public gun: Gun;
 

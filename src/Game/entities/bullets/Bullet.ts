@@ -1,55 +1,57 @@
 import { AssetName } from "App/components/GameCanvas/assetsToLoad";
+import { Velocity } from "Game/core/models/Velocity";
 import { Game } from "Game/Game";
 import { ImgAsset } from "Game/modules/AssetsRepository";
-import { ObjectsPoolEntity } from "Game/modules/ObjectsPool/ObjectsPoolEntity";
-import { defineScale } from "Game/utils";
+import { ObjectsPoolItem } from "Game/modules/ObjectsPool";
 
-export class Bullet extends ObjectsPoolEntity {
-  public damage = 1;
+interface BulletConfig {
+  game: Game;
+  damage: number;
+  assetName: AssetName;
+}
 
-  private speed = 10;
+export class Bullet extends ObjectsPoolItem {
+  public damage: number;
 
   protected asset!: ImgAsset;
-  protected maxWidth = 7;
 
-  constructor(game: Game) {
-    super({ game });
+  constructor({ game, damage, assetName }: BulletConfig) {
+    super(game);
+
+    this.damage = damage;
+    this.velocity = new Velocity(0, 10);
+    this.initAsset(assetName);
   }
 
-  public initAsset(assetName: AssetName) {
+  private initAsset(assetName: AssetName) {
     const asset = this.game.assetsRepo.getAsset<AssetName, ImgAsset>(assetName);
     if (!asset) throw new Error("Asset for bullet is not found!");
     this.asset = asset;
   }
 
-  public initSize() {
-    this.scale = defineScale(this.maxWidth, this.asset.width);
-    this.width = this.asset.width * this.scale;
-    this.height = this.asset.height * this.scale;
-  }
-
   public update() {
-    this.y -= this.speed;
+    this.position.decreaseY(this.velocity.y);
 
-    const playerGun = this.game.player.gun;
-    const isOutOfGun = this.y + this.height < playerGun.position.y;
-    if (!isOutOfGun) {
-      this.x = playerGun.position.x + playerGun.size.width * 0.5 - this.width * 0.5;
-    }
+    this.handleGunCorrection();
 
-    if (this.y <= 0) {
+    if (this.position.y <= 0) {
       this.pullFromGame();
     }
   }
 
+  private handleGunCorrection() {
+    const playerGun = this.game.player.gun;
+    const isOutOfGun = this.position.y + this.size.height < playerGun.position.y;
+
+    if (isOutOfGun) return;
+    this.position.setX(playerGun.position.x + playerGun.size.width * 0.5 - this.size.width * 0.5 - 1);
+  }
+
   public render() {
-    this.game.renderer.drawImage({
-      asset: this.asset,
-      obj: this,
-    });
+    this.game.renderer.drawImageNew({ img: this.asset, position: this.position, size: this.size });
 
     if (this.game.isDebug) {
-      this.game.renderer.strokeRect({ obj: this, color: "yellow" });
+      this.game.renderer.strokeRectNew({ obj: this, color: "yellow" });
     }
   }
 }

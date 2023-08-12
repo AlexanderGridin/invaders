@@ -1,5 +1,5 @@
 import { Game } from "Game/Game";
-import { GameObject, GameObjectConfig, Renderable } from "Game/core";
+import { GameObjectOLD, GameObjectConfig, Renderable } from "Game/core";
 import { Entity } from "Game/core/Entity";
 
 type HealthBarEntity = Entity & { isInGame: boolean };
@@ -14,7 +14,7 @@ interface HealthBarConfig extends GameObjectConfig {
   color?: string;
 }
 
-export class HealthBar extends GameObject implements Renderable {
+export class HealthBar extends GameObjectOLD implements Renderable {
   private game: Game;
   private entity: HealthBarEntity;
 

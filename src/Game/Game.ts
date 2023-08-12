@@ -67,8 +67,6 @@ export class Game {
       // Enemies
       // this.enemiesManager,
       this.enemiesGrid,
-      // Player
-      this.player,
     ];
   }
 
@@ -109,13 +107,12 @@ export class Game {
   private update() {
     this.handleSelfUpdate();
 
-    this.gameObjects.forEach((obj) => {
-      if (obj instanceof MovableGameObject) {
+    for (let obj of this.gameObjects) {
+      if ("update" in obj && typeof obj["update"] === "function") {
         obj.update();
       }
-    });
+    }
 
-    // this.player2.update();
     this.bulletsManager.update();
     // this.enemiesManager.update();
   }
@@ -132,8 +129,8 @@ export class Game {
   }
 
   private spawnEnemy() {
-    const cell = this.getRandomEnemiesGridCell();
-    const enemy = this.getRandomEnemy();
+    const cell = this.enemiesGrid.getRandomCell();
+    const enemy = this.enemiesManager.getRandomEnemy();
 
     if (!enemy || !cell) {
       return;
@@ -158,37 +155,16 @@ export class Game {
     });
   }
 
-  private getRandomEnemiesGridCell() {
-    const randomIndex = Math.round(Math.random() * this.enemiesGrid.cells.length);
-    const lastCellIndex = this.enemiesGrid.cells.length - 1;
-
-    const index = randomIndex > lastCellIndex ? lastCellIndex : randomIndex;
-    return this.enemiesGrid.cells[index];
-  }
-
-  private getRandomEnemy() {
-    const random = Math.random() * 100;
-    let enemy = this.enemiesManager.getEnemy("light");
-
-    if (random < 10) {
-      enemy = this.enemiesManager.getEnemy("heavy");
-    } else if (random < 40) {
-      enemy = this.enemiesManager.getEnemy("medium");
-    } else if (random < 50) {
-      enemy = this.enemiesManager.getEnemy("regular");
-    }
-
-    return enemy;
-  }
-
   private render() {
-    this.gameObjects.forEach((obj) => {
-      obj.render();
-    });
-
     this.renderables.forEach((renderable) => {
       renderable.render();
     });
+
+    for (let obj of this.gameObjects) {
+      if ("render" in obj && typeof obj["render"] === "function") {
+        obj.render();
+      }
+    }
   }
 
   public stop() {

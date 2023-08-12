@@ -22,6 +22,4 @@ export abstract class GameObject {
     this.position = new Position();
     this.size = new Size();
   }
-
-  public abstract render(): void;
 }

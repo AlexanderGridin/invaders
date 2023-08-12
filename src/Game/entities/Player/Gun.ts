@@ -1,11 +1,12 @@
 import { AssetName } from "App/components/GameCanvas/assetsToLoad";
-import { GameObject, Size } from "Game/core/models";
+import { Render, Update } from "Game/core/interfaces";
+import { GameObject, Position, Size } from "Game/core/models";
 import { Game } from "Game/Game";
 import { ImgAsset } from "Game/modules/AssetsRepository";
 import { KeyboardKeyCode } from "Game/modules/Keyboard/enums";
 import { Player } from "./Player";
 
-export class Gun extends GameObject {
+export class Gun extends GameObject implements Update, Render {
   public asset: ImgAsset;
 
   private game: Game;
@@ -59,8 +60,8 @@ export class Gun extends GameObject {
     const bullet = this.game.bulletsManager.getBullet("light");
 
     if (bullet) {
-      const bulletX = this.position.x + this.size.width * 0.5 - bullet.width * 0.5;
-      bullet.pushInGame(bulletX, this.position.y);
+      const bulletX = this.position.x + this.size.width * 0.5 - bullet.size.width * 0.5;
+      bullet.pushInGame(new Position(bulletX, this.position.y));
     }
 
     this.resetShootingTimer();
@@ -83,8 +84,8 @@ export class Gun extends GameObject {
     const bullet = this.game.bulletsManager.getBullet("medium");
 
     if (bullet) {
-      const bulletX = this.position.x + this.size.width * 0.5 - bullet.width * 0.5;
-      bullet.pushInGame(bulletX, this.position.y);
+      const bulletX = this.position.x + this.size.width * 0.5 - bullet.size.width * 0.5;
+      bullet.pushInGame(new Position(bulletX, this.position.y));
     }
   }
 
@@ -97,8 +98,8 @@ export class Gun extends GameObject {
     const bullet = this.game.bulletsManager.getBullet("heavy");
 
     if (bullet) {
-      const bulletX = this.position.x + this.size.width * 0.5 - bullet.width * 0.5;
-      bullet.pushInGame(bulletX, this.position.y);
+      const bulletX = this.position.x + this.size.width * 0.5 - bullet.size.width * 0.5;
+      bullet.pushInGame(new Position(bulletX, this.position.y));
     }
   }
 

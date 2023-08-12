@@ -99,4 +99,19 @@ export class EnemiesManager {
       ...this.heavyPool.pool,
     ] as Enemy[];
   }
+
+  public getRandomEnemy(): Enemy {
+    const random = Math.random() * 100;
+    let enemy = this.getEnemy("light");
+
+    if (random < 10) {
+      enemy = this.getEnemy("heavy");
+    } else if (random < 40) {
+      enemy = this.getEnemy("medium");
+    } else if (random < 50) {
+      enemy = this.getEnemy("regular");
+    }
+
+    return enemy as Enemy;
+  }
 }

@@ -128,17 +128,13 @@ export class Enemy extends ObjectsPoolEntity {
   }
 
   private handleBulletCollision(bullet: Bullet) {
-    const hasCollision = checkRectanglesSimpleCollision({ a: this, b: bullet });
-    if (!hasCollision) return;
-
-    this.takeDamage(bullet.damage);
-    this.slowDown();
-
-    bullet.pullFromGame();
-
-    if (this.lives > 0) return;
-
-    this.pullFromGame();
+    // const hasCollision = checkRectanglesSimpleCollision({ a: this, b: bullet });
+    // if (!hasCollision) return;
+    // this.takeDamage(bullet.damage);
+    // this.slowDown();
+    // bullet.pullFromGame();
+    // if (this.lives > 0) return;
+    // this.pullFromGame();
   }
 
   private slowDown() {

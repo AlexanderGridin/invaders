@@ -1,4 +1,4 @@
-import { GameObject, Renderable } from "Game/core";
+import { GameObjectOLD, Renderable } from "Game/core";
 import { Game } from "Game/Game";
 
 interface GridCellConfig {
@@ -11,7 +11,7 @@ interface GridCellConfig {
   columnIndex: number;
 }
 
-export class GridCell extends GameObject implements Renderable {
+export class GridCell extends GameObjectOLD implements Renderable {
   private game: Game;
 
   public rowIndex: number;

@@ -1,4 +1,4 @@
-import { GameObject } from "Game/core";
+import { GameObjectOLD } from "Game/core";
 import { GameObject as GameObjNew, Position, Size } from "Game/core/models";
 import { ImgAsset } from "../AssetsRepository";
 
@@ -40,7 +40,7 @@ export class Renderer {
     sy?: number;
     sw?: number;
     sh?: number;
-    obj: GameObject;
+    obj: GameObjectOLD;
   }) {
     this.ctx.drawImage(asset.element as HTMLImageElement, sx, sy, sw, sh, obj.x, obj.y, obj.width, obj.height);
   }
@@ -59,7 +59,7 @@ export class Renderer {
     );
   }
 
-  public strokeRect({ obj, color = "#000" }: { obj: GameObject; color?: string }) {
+  public strokeRect({ obj, color = "#000" }: { obj: GameObjectOLD; color?: string }) {
     this.ctx.save();
     this.ctx.strokeStyle = color;
     this.ctx.strokeRect(obj.x, obj.y, obj.width, obj.height);
@@ -73,7 +73,7 @@ export class Renderer {
     this.ctx.restore();
   }
 
-  public fillRect({ obj, color = "#000" }: { obj: GameObject; color?: string }) {
+  public fillRect({ obj, color = "#000" }: { obj: GameObjectOLD; color?: string }) {
     this.ctx.save();
     this.ctx.fillStyle = color;
     this.ctx.fillRect(obj.x, obj.y, obj.width, obj.height);

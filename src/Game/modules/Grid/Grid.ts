@@ -1,4 +1,4 @@
-import { GameObject, Renderable } from "Game/core";
+import { GameObjectOLD, Renderable } from "Game/core";
 import { Game } from "Game/Game";
 import { GridCell } from "./GridCell";
 
@@ -9,7 +9,7 @@ interface GridConfig {
   cellSize: number;
 }
 
-export class Grid extends GameObject implements Renderable {
+export class Grid extends GameObjectOLD implements Renderable {
   public cells: GridCell[] = [];
 
   private game: Game;
@@ -59,11 +59,19 @@ export class Grid extends GameObject implements Renderable {
     }
   }
 
-  public update() {}
+  public getRandomCell(): GridCell {
+    const randomIndex = Math.round(Math.random() * this.cells.length);
+    const lastCellIndex = this.cells.length - 1;
+
+    const index = randomIndex > lastCellIndex ? lastCellIndex : randomIndex;
+    return this.cells[index];
+  }
 
   public render() {
     this.cells.forEach((cell) => {
       cell.render();
     });
   }
+
+  public update() {}
 }

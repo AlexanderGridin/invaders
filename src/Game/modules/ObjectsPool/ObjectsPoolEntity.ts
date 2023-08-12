@@ -1,11 +1,11 @@
-import { GameObject, GameObjectConfig, Renderable } from "Game/core";
+import { GameObjectOLD, GameObjectConfig, Renderable } from "Game/core";
 import { Game } from "Game/Game";
 
 export interface ObjectsPoolEntityConfig extends GameObjectConfig {
   game: Game;
 }
 
-export class ObjectsPoolEntity extends GameObject implements Renderable {
+export class ObjectsPoolEntity extends GameObjectOLD implements Renderable {
   protected game: Game;
   public isInGame = false;
 

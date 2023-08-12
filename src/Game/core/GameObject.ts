@@ -8,7 +8,7 @@ export interface GameObjectConfig {
   scale?: number;
 }
 
-export class GameObject {
+export class GameObjectOLD {
   public x: number;
   public y: number;
 

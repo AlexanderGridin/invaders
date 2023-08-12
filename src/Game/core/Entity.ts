@@ -1,11 +1,11 @@
-import { GameObject, GameObjectConfig } from "./GameObject";
+import { GameObjectOLD, GameObjectConfig } from "./GameObject";
 
 export interface EntityConfig extends GameObjectConfig {
   lives: number;
   speed: number;
 }
 
-export class Entity extends GameObject {
+export class Entity extends GameObjectOLD {
   public lives = 0;
   public speed: number;
 
