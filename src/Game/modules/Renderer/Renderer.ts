@@ -1,4 +1,5 @@
 import { GameObject } from "Game/core";
+import { GameObject as GameObjNew, Position, Size } from "Game/core/models";
 import { ImgAsset } from "../AssetsRepository";
 
 export class Renderer {
@@ -44,10 +45,31 @@ export class Renderer {
     this.ctx.drawImage(asset.element as HTMLImageElement, sx, sy, sw, sh, obj.x, obj.y, obj.width, obj.height);
   }
 
+  public drawImageNew({ img, position, size }: { img: ImgAsset; position: Position; size: Size }) {
+    this.ctx.drawImage(
+      img.element as HTMLImageElement,
+      0,
+      0,
+      size.width,
+      size.height,
+      position.x,
+      position.y,
+      size.width,
+      size.height
+    );
+  }
+
   public strokeRect({ obj, color = "#000" }: { obj: GameObject; color?: string }) {
     this.ctx.save();
     this.ctx.strokeStyle = color;
     this.ctx.strokeRect(obj.x, obj.y, obj.width, obj.height);
+    this.ctx.restore();
+  }
+
+  public strokeRectNew({ obj, color = "red" }: { obj: GameObjNew; color?: string }) {
+    this.ctx.save();
+    this.ctx.strokeStyle = color;
+    this.ctx.strokeRect(obj.position.x, obj.position.y, obj.size.width, obj.size.height);
     this.ctx.restore();
   }
 

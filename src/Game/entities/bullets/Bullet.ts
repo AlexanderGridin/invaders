@@ -32,9 +32,9 @@ export class Bullet extends ObjectsPoolEntity {
     this.y -= this.speed;
 
     const playerGun = this.game.player.gun;
-    const isOutOfGun = this.y + this.height < playerGun.y;
+    const isOutOfGun = this.y + this.height < playerGun.position.y;
     if (!isOutOfGun) {
-      this.x = playerGun.x + playerGun.width * 0.5 - this.width * 0.5;
+      this.x = playerGun.position.x + playerGun.size.width * 0.5 - this.width * 0.5;
     }
 
     if (this.y <= 0) {

@@ -1,51 +1,35 @@
 import { AssetName } from "App/components/GameCanvas/assetsToLoad";
-import { GameObject, Renderable } from "Game/core";
+import { GameObject, Size } from "Game/core/models";
 import { Game } from "Game/Game";
 import { ImgAsset } from "Game/modules/AssetsRepository";
-import { defineScale } from "Game/utils";
 import { Player } from "./Player";
 
-export class Base extends GameObject implements Renderable {
+export class Base extends GameObject {
   private game: Game;
   private player: Player;
-  public asset!: ImgAsset;
+  public asset: ImgAsset;
 
   constructor(game: Game, player: Player) {
-    super({});
+    const { width, height } = game.config.player.base;
+    super({ size: new Size(width, height) });
 
     this.game = game;
     this.player = player;
-
-    this.initAsset();
-    this.initSize();
-  }
-
-  private initAsset() {
-    const asset = this.game.assetsRepo.getAsset<AssetName, ImgAsset>("t-base");
-
-    if (!asset) return;
-    this.asset = asset;
-  }
-
-  private initSize() {
-    this.scale = defineScale(this.player.maxWidth, this.asset.width);
-    this.width = this.asset.width * this.scale;
-    this.height = this.asset.height * this.scale;
+    this.asset = this.game.assetsRepo.getAsset<AssetName, ImgAsset>("t-base");
   }
 
   public update() {
-    this.x = this.player.x;
-    this.y = this.player.y;
+    const { x, y } = this.player.position;
+
+    this.position.setX(x);
+    this.position.setY(y);
   }
 
   public render() {
-    this.game.renderer.drawImage({
-      asset: this.asset,
-      obj: this,
-    });
+    this.game.renderer.drawImageNew({ img: this.asset, position: this.position, size: this.size });
 
     if (this.game.isDebug) {
-      this.game.renderer.strokeRect({ obj: this, color: "blue" });
+      this.game.renderer.strokeRectNew({ obj: this, color: "blue" });
     }
   }
 }

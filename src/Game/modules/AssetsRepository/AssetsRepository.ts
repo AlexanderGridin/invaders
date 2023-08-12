@@ -84,7 +84,7 @@ export class AssetsRepository {
     });
   }
 
-  getAsset<NameType, AssetType extends Asset>(name: NameType): AssetType | null {
+  getAsset<NameType, AssetType extends Asset>(name: NameType): AssetType {
     if (typeof name !== "string") {
       throw new Error("Expected value of string type as the asset name");
     }
@@ -96,7 +96,7 @@ export class AssetsRepository {
         return asset as AssetType;
 
       default:
-        return null;
+        throw new Error(`Asset ${name} not found in the Assets Repository`);
     }
   }
 }

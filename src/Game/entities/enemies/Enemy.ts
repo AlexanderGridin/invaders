@@ -66,14 +66,14 @@ export class Enemy extends ObjectsPoolEntity {
 
     this.moveDown();
 
-    const isHitPlayer =
-      this.y >= this.game.renderer.canvasHeight - this.height ||
-      checkRectanglesSimpleCollision({ a: this, b: this.game.player });
+    // const isHitPlayer =
+    //   this.y >= this.game.renderer.canvasHeight - this.height ||
+    //   checkRectanglesSimpleCollision({ a: this, b: this.game.playerOLD });
 
-    if (isHitPlayer) {
-      this.game.player.takeDamage();
-      this.pullFromGame();
-    }
+    // if (isHitPlayer) {
+    //   this.game.playerOLD.takeDamage();
+    //   this.pullFromGame();
+    // }
 
     this.game.bulletsManager.forEachInGame(this.handleBulletCollision.bind(this));
 

@@ -1,8 +1,10 @@
 import { config } from "./config";
 import { Renderable } from "./core";
-import { Player } from "./entities";
+import { GameObject } from "./core/models";
+import { MovableGameObject } from "./core/models/MovableGameObject";
 import { BulletsManager } from "./entities/bullets";
 import { EnemiesManager } from "./entities/enemies";
+import { Player } from "./entities/Player";
 import { AssetsRepository, AssetToLoad } from "./modules/AssetsRepository";
 import { Counter } from "./modules/Counter";
 import { Grid } from "./modules/Grid";
@@ -25,6 +27,7 @@ export class Game {
   private enemiesCounter = new Counter();
   public enemiesGrid!: Grid;
   private renderables: Renderable[] = [];
+  private gameObjects: (GameObject | MovableGameObject)[] = [];
 
   private isInProgress = false;
   public isDebug = false;
@@ -46,6 +49,7 @@ export class Game {
 
   public init() {
     this.player = new Player(this);
+
     this.bulletsManager = new BulletsManager(this);
     this.enemiesManager = new EnemiesManager(this);
 
@@ -56,11 +60,12 @@ export class Game {
       cellSize: this.config.enemies.grid.cellSize,
     });
 
+    this.gameObjects = [this.player];
     this.renderables = [
       // Bullets
       this.bulletsManager,
       // Enemies
-      this.enemiesManager,
+      // this.enemiesManager,
       this.enemiesGrid,
       // Player
       this.player,
@@ -103,9 +108,16 @@ export class Game {
 
   private update() {
     this.handleSelfUpdate();
-    this.player.update();
+
+    this.gameObjects.forEach((obj) => {
+      if (obj instanceof MovableGameObject) {
+        obj.update();
+      }
+    });
+
+    // this.player2.update();
     this.bulletsManager.update();
-    this.enemiesManager.update();
+    // this.enemiesManager.update();
   }
 
   private handleSelfUpdate() {
@@ -170,6 +182,10 @@ export class Game {
   }
 
   private render() {
+    this.gameObjects.forEach((obj) => {
+      obj.render();
+    });
+
     this.renderables.forEach((renderable) => {
       renderable.render();
     });

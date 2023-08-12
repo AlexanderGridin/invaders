@@ -61,11 +61,11 @@ export const assetsToLoad: AssetToLoad[] = [
   },
   {
     name: "t-base",
-    src: "/assets/tbase.png",
+    src: "/assets/tbase_size.png",
   },
   {
     name: "t-gun",
-    src: "/assets/tgun.png",
+    src: "/assets/tgun_size.png",
   },
   {
     name: "tl",
