@@ -1,24 +1,23 @@
-import { GameObjectOLD, Renderable } from "Game/core";
+import { Render } from "Game/core/interfaces";
+import { GameObject, Position, Size } from "Game/core/models";
 import { Game } from "Game/Game";
 
 interface GridCellConfig {
   game: Game;
-  x: number;
-  y: number;
-  width: number;
-  height: number;
+  position: Position;
+  size: Size;
   rowIndex: number;
   columnIndex: number;
 }
 
-export class GridCell extends GameObjectOLD implements Renderable {
+export class GridCell extends GameObject implements Render {
   private game: Game;
 
   public rowIndex: number;
   public columnIndex: number;
 
-  constructor({ game, x, y, width, height, rowIndex, columnIndex }: GridCellConfig) {
-    super({ x, y, width, height });
+  constructor({ game, position, size, rowIndex, columnIndex }: GridCellConfig) {
+    super({ position, size });
 
     this.game = game;
 
@@ -29,11 +28,13 @@ export class GridCell extends GameObjectOLD implements Renderable {
   public render() {
     if (!this.game.isDebug) return;
 
-    this.game.renderer.strokeRect({
+    this.game.renderer.strokeRectNew({
       obj: this,
       color: "#BF616A",
     });
+    // this.game.renderer.strokeRect({
+    //   obj: this,
+    //   color: "#BF616A",
+    // });
   }
-
-  public update() {}
 }
