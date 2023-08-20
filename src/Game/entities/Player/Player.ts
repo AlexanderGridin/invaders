@@ -4,6 +4,7 @@ import { MovableGameObject } from "Game/core/models/MovableGameObject";
 import { Velocity } from "Game/core/models/Velocity";
 import { toInt } from "Game/core/utils";
 import { Game } from "Game/Game";
+import { Health } from "Game/modules/Health";
 import { KeyboardKeyCode } from "Game/modules/Keyboard/enums";
 import { Base } from "./Base";
 import { Gun } from "./Gun";
@@ -11,6 +12,7 @@ import { Gun } from "./Gun";
 export class Player extends MovableGameObject implements Update, Render {
   public base: Base;
   public gun: Gun;
+  public health: Health;
 
   private game: Game;
   private speedBoost: number;
@@ -21,6 +23,7 @@ export class Player extends MovableGameObject implements Update, Render {
     this.game = game;
     this.base = new Base(game, this);
     this.gun = new Gun(game, this);
+    this.health = new Health(15);
     this.speedBoost = game.config.player.speedBoost;
 
     this.initPosition();

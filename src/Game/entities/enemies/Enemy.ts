@@ -151,12 +151,12 @@ export class Enemy extends ObjectsPoolItem {
   public render() {
     if (!this.isInGame) return;
 
-    this.game.renderer.drawImageNew({ img: this.asset, position: this.position, size: this.size });
+    this.game.renderer.drawImage({ img: this.asset, position: this.position, size: this.size });
 
     // this.healthBar.render();
 
     if (this.game.isDebug) {
-      this.game.renderer.strokeRectNew({ obj: this, color: "cyan" });
+      this.game.renderer.strokeRect({ obj: this, color: "cyan" });
       this.renderDebugText();
     }
   }

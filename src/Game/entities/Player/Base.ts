@@ -27,10 +27,10 @@ export class Base extends GameObject implements Update, Render {
   }
 
   public render() {
-    this.game.renderer.drawImageNew({ img: this.asset, position: this.position, size: this.size });
+    this.game.renderer.drawImage({ img: this.asset, position: this.position, size: this.size });
 
     if (this.game.isDebug) {
-      this.game.renderer.strokeRectNew({ obj: this, color: "blue" });
+      this.game.renderer.strokeRect({ obj: this, color: "blue" });
     }
   }
 }

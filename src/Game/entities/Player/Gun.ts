@@ -104,10 +104,10 @@ export class Gun extends GameObject implements Update, Render {
   }
 
   public render() {
-    this.game.renderer.drawImageNew({ img: this.asset, position: this.position, size: this.size });
+    this.game.renderer.drawImage({ img: this.asset, position: this.position, size: this.size });
 
     if (this.game.isDebug) {
-      this.game.renderer.strokeRectNew({ obj: this, color: "red" });
+      this.game.renderer.strokeRect({ obj: this, color: "red" });
     }
   }
 }

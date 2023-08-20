@@ -28,7 +28,7 @@ export class GridCell extends GameObject implements Render {
   public render() {
     if (!this.game.isDebug) return;
 
-    this.game.renderer.strokeRectNew({
+    this.game.renderer.strokeRect({
       obj: this,
       color: "#BF616A",
     });
